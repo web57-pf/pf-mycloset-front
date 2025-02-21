@@ -1,105 +1,72 @@
 import Link from "next/link";
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { FaInstagram, FaFacebook, FaWhatsapp } from "react-icons/fa"; 
 
 export const Footer = () => {
   return (
-    <footer className="bg-zinc-50 text-gray-700 mt-auto py-8">
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          <div className="space-y-4">
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-gray-800">
-              Sobre nosotros
-            </h4>
-            <p className="text-sm text-gray-600">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-gray-800">
-              Accesos rápidos
-            </h4>
-            <nav className="flex flex-col space-y-2">
-              <Link
-                href="/"
-                className="text-sm text-gray-700 hover:text-cyan-500 transition-colors"
-              >
-                Inicio
-              </Link>
-              <Link
-                href="/products"
-                className="text-sm text-gray-700 hover:text-cyan-500 transition-colors"
-              >
-                Términos y condiciones
-              </Link>
-            </nav>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-gray-800">
-              Soporte
-            </h4>
-            <div className="text-sm space-y-2">
-              <p>Dirección:</p>
-              <p>Teléfono:</p>
-              <p aria-label="Email">
-                <a
-                  href="mailto:info@imagoargentina.com"
-                  className="text-cyan-500 hover:text-cyan-300 transition-colors"
-                >
-                  info@email.com
-                </a>
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col justify-center items-start space-y-4">
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-gray-800">
-              Síguenos
-            </h4>
-            <div className="flex space-x-4">
-              <a
-                href="https://www.facebook.com/tu-pagina"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-700 hover:text-cyan-500 transition-colors"
-              >
-                <FaFacebook size={24} />
-              </a>
-              <a
-                href="https://www.twitter.com/tu-pagina"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-700 hover:text-cyan-500 transition-colors"
-              >
-                <FaTwitter size={24} />
-              </a>
-              <a
-                href="https://www.instagram.com/tu-pagina"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-700 hover:text-cyan-500 transition-colors"
-              >
-                <FaInstagram size={24} />
-              </a>
-              <a
-                href="https://www.linkedin.com/tu-pagina"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-700 hover:text-cyan-500 transition-colors"
-              >
-                <FaLinkedin size={24} />
-              </a>
-            </div>
+    <footer className="bg-[#C3DEF4] p-6">
+      <div className="max-w-7xl mx-auto flex justify-between items-start">
+        <div className="flex flex-col space-y-4">
+          <span className="text-lg font-semibold text-gray-800">Enlaces</span>
+          <div className="flex flex-col space-y-2">
+            <Link href="/mycloset">
+            <span className="text-sm text-gray-700 hover:text-blue-500">Mi Armario</span>
+            </Link>
+            <Link href="/aboutus">
+            <span className="text-sm text-gray-700 hover:text-blue-500">Sobre Nosotros</span>
+            </Link>
+            <Link href="/contact">
+            <span className="text-sm text-gray-700 hover:text-blue-500">Contacto</span>
+            </Link>
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-gray-300 text-center">
-          <p className="text-sm text-gray-500">
-            &copy; {new Date().getFullYear()} myCloset 2025. Todos los derechos reservados.
-          </p>
+        <div className="flex flex-col items-center space-y-4">
+          <span className="text-lg font-semibold text-gray-800">Redes Sociales</span>
+          <div className="flex justify-center space-x-4">
+            <Link href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">
+            <span>
+              <FaInstagram 
+                className="text-xl text-gray-600 cursor-pointer hover:text-[#E4405F]" 
+              />
+            </span>
+            </Link>
+            <Link href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">
+            <span>
+              <FaFacebook 
+                className="text-xl text-gray-600 cursor-pointer hover:text-blue-600" 
+              />
+            </span>
+            </Link>
+            <Link
+              href="https://wa.me/1234567890?text=Hola!%20Quisiera%20obtener%20más%20información." 
+              target="_blank" 
+              rel="noopener noreferrer">
+            <span>
+              <FaWhatsapp 
+                className="text-xl text-gray-600 cursor-pointer hover:text-green-500" 
+              />
+            </span>
+              </Link>
+          </div>
         </div>
+          <div className="flex flex-col space-y-4">
+          <span className="text-lg font-semibold text-gray-800">Información</span>
+          <div className="flex flex-col space-y-2">
+            <Link href="/faq">
+            <span className="text-sm text-gray-700 hover:text-blue-500">Preguntas Frecuentes</span>
+            </Link>
+            <Link href="/support">
+            <span className="text-sm text-gray-700 hover:text-blue-500">Soporte al Cliente</span>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-6 text-center text-sm text-gray-700">
+        <p>© 2025 Mi Proyecto. Todos los derechos reservados.</p>
       </div>
     </footer>
   );
 };
+
+export default Footer;

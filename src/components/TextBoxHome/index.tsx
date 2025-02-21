@@ -8,7 +8,7 @@ export default function TextBoxHome() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSecondMessage(true);
-    }, 2000);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -42,7 +42,7 @@ export default function TextBoxHome() {
           font-semibold
         "
       >
-        ¿Y hoy, qué me pongo?
+        ¿Y hoy, qué me pongo? 🤔
       </div>
 
       {showSecondMessage && (
@@ -51,6 +51,7 @@ export default function TextBoxHome() {
           className="
             bg-cyan-500
             text-white
+            -mr-4
             px-8
             py-4
             rounded-lg
