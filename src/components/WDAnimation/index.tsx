@@ -5,7 +5,7 @@ export default function Armario() {
         <div className="flex flex-col items-center justify-start min-h-screen">
             <Image src="/armario.png" alt="armario" width={500} height={500} />
             <h2 className="text-center text-black text-4xl font-light">
-                empieza a llenar tu armario...
+                nada por aquí, nada por allá...
             </h2>
         </div>
     );

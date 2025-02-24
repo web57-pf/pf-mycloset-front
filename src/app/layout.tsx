@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import DeepSeekChatbot from "@/components/ChatBot";
+
 
 export const metadata: Metadata = {
   title: "myCloset",
@@ -20,6 +22,7 @@ export default function RootLayout({
         <main className="flex-grow">
           {children}
         </main>
+        <DeepSeekChatbot />
         <Footer />
       </body>
     </html>

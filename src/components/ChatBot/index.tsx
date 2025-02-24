@@ -11,12 +11,18 @@ interface Message {
 const presetQuestions = [
   "¿Qué combina con el color amarillo?",
   "¿Qué combina con una camiseta azul?",
+  "¿Qué combina con el color rojo?",
+  "¿Qué combina con una camiseta roja?",
 ];
 
 const predefinedResponses: Record<string, string> = {
   "¿qué combina con el color amarillo?":
     "Con una camiseta blanca, jeans azules o incluso accesorios negros. ¡El contraste queda genial!",
   "¿qué combina con una camiseta azul?":
+    "Puedes usar pantalones beige, unos jeans grises o una chaqueta de cuero negra. Todo depende del estilo que busques.",
+    "¿qué combina con el color rojo?":
+    "Con una camiseta blanca, jeans azules o incluso accesorios negros. ¡El contraste queda genial!",
+    "¿qué combina con una camiseta roja?":
     "Puedes usar pantalones beige, unos jeans grises o una chaqueta de cuero negra. Todo depende del estilo que busques.",
 };
 
@@ -97,7 +103,7 @@ export default function SimpleChatbot() {
           "
         >
           <div className="bg-cyan-500 text-white p-3 rounded-t-md flex items-center justify-between">
-            <span className="font-semibold">Asistente de Estilo</span>
+            <span className="font-semibold">myAssistant</span>
             <button onClick={toggleChat} className="text-white">
               ✕
             </button>
@@ -128,7 +134,7 @@ export default function SimpleChatbot() {
                 key={idx}
                 onClick={() => handlePresetClick(question)}
                 className="
-                  text-xs
+                  text-sm
                   text-white
                   bg-cyan-400
                   hover:bg-cyan-500

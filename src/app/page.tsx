@@ -1,6 +1,4 @@
-// Home.tsx
 import AnimatedPage from "@/components/AnimatedPage";
-import DeepSeekChatbot from "@/components/ChatBot";
 import TextBoxHome from "@/components/TextBoxHome";
 import Image from "next/image";
 
@@ -16,10 +14,6 @@ export default function Home() {
           priority
         />
         <TextBoxHome />
-      </div>
-
-      <div>
-        <DeepSeekChatbot />
       </div>
     </AnimatedPage>
   );

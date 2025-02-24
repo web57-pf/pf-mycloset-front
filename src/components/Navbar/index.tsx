@@ -50,9 +50,6 @@ export const Navbar = () => {
           <Link href="/aboutus">
           <span className="text-sm text-gray-700 cursor-pointer hover:text-blue-500 transition-all duration-150">Sobre Nosotros</span>
           </Link>
-          <Link href="/contact">
-          <span className="text-sm text-gray-700 cursor-pointer hover:text-blue-500 transition-all duration-150">Contacto</span>
-          </Link>
         </div>
       </div>
     </nav>
