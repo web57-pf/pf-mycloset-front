@@ -12,7 +12,7 @@ const Login = () => {
   const router = useRouter();
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:3000/auth/google";
+    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
   };
 
   interface LoginResponse {
@@ -35,7 +35,7 @@ const Login = () => {
         password,
       };
 
-      const response = await fetch("http://localhost:3000/auth/signin", { 
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/signin`, { 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +54,7 @@ const Login = () => {
           icon: "success",
           confirmButtonText: "Aceptar",
         }).then(() => {
-          router.push("/dashboard");
+          router.push("/mycloset");
         });
       } else {
         console.error("Error al iniciar sesión");
@@ -71,7 +71,7 @@ const Login = () => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await fetch("http://localhost:3000/auth/session", { 
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session`, { 
           method: "GET",
           credentials: "include",
         });
@@ -86,7 +86,7 @@ const Login = () => {
             showConfirmButton: false,
             timer: 1500,
           }).then(() => {
-            router.push("/dashboard");
+            router.push("/mycloset");
           });
         }
       } catch (error) {
@@ -156,7 +156,7 @@ const Login = () => {
         <div className="mt-4 text-center text-sm text-gray-500">
           ¿No tienes una cuenta?{" "}
           <button 
-            onClick={() => router.push("/register")}
+            onClick={() => router.push("/signup")}
             className="text-blue-500 hover:text-blue-700 font-semibold"
           >
             Regístrate

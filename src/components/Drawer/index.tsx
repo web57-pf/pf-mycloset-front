@@ -1,5 +1,7 @@
 'use client';
 
+import { useAuth } from "@/contexts/authContext";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 interface DrawerProps {
@@ -9,6 +11,15 @@ interface DrawerProps {
 }
 
 export default function Drawer({ isOpen, onClose, children }: DrawerProps) {
+  const router = useRouter();
+  const { logout } = useAuth(); 
+
+  const handleLogout = () => {
+    logout();
+    onClose();
+    router.push("/");
+  };
+
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
     return () => {
@@ -53,6 +64,11 @@ export default function Drawer({ isOpen, onClose, children }: DrawerProps) {
           <div className="p-4">
             {children}
           </div>
+          <button
+            onClick={handleLogout}
+            className="absolute bottom-0 right-0 p-4 bg-red-500 text-white hover:bg-red-600 transition-colors z-50"
+            title="Cerrar sesión"
+          >Cerrar Sesión</button>
         </div>
       </div>
     </>

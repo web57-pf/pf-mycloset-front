@@ -1,35 +1,121 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Drawer from "@/components/Drawer";
 import Dashboard from "@/components/Dashboard";
 import Wardrobe, { Garment } from "@/components/Wardrobe";
 import { CloudinaryImage } from "@/interfaces/Images";
 import Image from "next/image";
 import Link from "next/link";
+import axios from "axios";
+import { Tag } from "@/components/WDManager";
+import { useAuth } from "@/contexts/authContext";
+import FilterClothes from "@/components/FilterClothes";
+
+export interface Clothe {
+  name: string;
+  categoryId: string;
+  type: string;
+  imageUrl: string;
+  tags: Tag[];
+  favorite: boolean;
+  combinations: string[];
+}
 
 export default function MyCloset() {
   const [newImage, setNewImage] = useState<CloudinaryImage | null>(null);
   const [savedGarments, setSavedGarments] = useState<Garment[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
+
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const fetchGarments = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/clothes`,
+          { withCredentials: true }
+        );
+        setSavedGarments(response.data);
+      } catch (error) {
+        console.error("Error obteniendo garments:", error);
+      }
+    };
+
+    fetchGarments();
+  }, []);
 
   const handleUploadSuccess = (image: CloudinaryImage) => {
     setNewImage(image);
   };
 
-  const handleSaveGarment = (garment: Garment) => {
-    setSavedGarments((prev) => [...prev, garment]);
-    setNewImage(null);
+  const handleSaveGarment = async (garment: Garment) => {
+    if (!user) {
+      console.error("No user found");
+      return;
+    }
+
+    try {
+      const payload = {
+        user: user.id,
+        name: garment.category.name.padEnd(20, " ") + garment.category.name,
+        categoryId: garment.category.id,
+        type: "default",
+        imageUrl: garment.imageUrl,
+        tags: garment.tags.map((tag) => tag.id),
+        favorite: false,
+        combinations: []
+      };
+
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/clothes`,
+        payload,
+        { withCredentials: true }
+      );
+      setSavedGarments((prev) => [...prev, response.data]);
+      setNewImage(null);
+    } catch (error) {
+      console.error("Error guardando garment:", error);
+    }
   };
 
-  const handleDeleteGarment = (id: string) => {
-    setSavedGarments((prev) => prev.filter((g) => g.id !== id));
+  const handleDeleteGarment = async (id: string) => {
+    try {
+      await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/clothes/${id}`, {
+        withCredentials: true,
+      });
+      setSavedGarments((prev) => prev.filter((g) => g.id !== id));
+    } catch (error) {
+      console.error("Error eliminando garment:", error);
+    }
+  };
+
+  const handleFilter = async (categoryId: string, tagIds: string[]) => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/clothes/filter/get`,
+        {
+          params: {
+            category: categoryId,
+            tags: tagIds.join(",")
+          },
+          withCredentials: true,
+        }
+      );
+      setSavedGarments(response.data);
+      setShowFilter(false);
+    } catch (error) {
+      console.error("Error filtrando garments:", error);
+    }
   };
 
   return (
     <div className="relative flex flex-row w-full min-h-screen bg-background">
-      <div className="relative flex flex-1">
-        <Wardrobe garments={savedGarments} onDeleteGarment={handleDeleteGarment} />
+      <div className="relative flex flex-1 flex-col">
+        <Wardrobe garments={savedGarments} onDeleteGarment={handleDeleteGarment} onFilter={handleFilter} />
+
+
         {!isDrawerOpen && (
           <button
             onClick={() => setIsDrawerOpen(true)}
@@ -51,10 +137,11 @@ export default function MyCloset() {
       </div>
 
       <div className="flex flex-col flex-1">
-        <Dashboard 
-          onUploadSuccess={handleUploadSuccess} 
-          newImage={newImage} 
-          onSaveGarment={handleSaveGarment} 
+        <Dashboard
+          onUploadSuccess={handleUploadSuccess}
+          newImage={newImage}
+          onSaveGarment={handleSaveGarment}
+          savedGarments={savedGarments}
         />
       </div>
 

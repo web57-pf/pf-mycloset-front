@@ -79,7 +79,7 @@ const Register = () => {
         password,
       };
 
-      const response = await fetch("http://localhost:3000/auth/signup", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -106,7 +106,7 @@ const Register = () => {
   };
 
   const handleLoginRedirect = () => {
-    router.push("/login");
+    router.push("/");
   };
 
   return (

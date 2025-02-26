@@ -1,37 +1,62 @@
 'use client';
 import Image from "next/image";
 import Armario from "../WDAnimation";
-import { CloudinaryImage } from "@/interfaces/Images";
+import { Category, Tag } from "../WDManager";
+import { useState } from "react";
+import FilterClothes from "../FilterClothes";
 
 export interface Garment {
   id: string;
-  image: CloudinaryImage;
-  tags: string[];
+  imageUrl: string;
+  tags: Tag[];
+  category: Category;
 }
 
 interface WardrobeProps {
   garments: Garment[];
   onDeleteGarment: (id: string) => void;
+  onFilter: (categoryId: string, tagIds: string[]) => void;
 }
 
-export default function Wardrobe({ garments, onDeleteGarment }: WardrobeProps) {
+export default function Wardrobe({ garments, onDeleteGarment, onFilter }: WardrobeProps) {
+  const [showFilter, setShowFilter] = useState(false);
   return (
     <div className="p-4 max-w-6xl mx-auto">
       {garments.length > 0 ? (
+        <>
+          
         <div className="grid grid-cols-3 gap-4">
           <div className="col-span-3">
             <h3 className="text-xl font-base mb-6 text-center">
               Prendas guardadas
             </h3>
+          <div className="w-full flex justify-center mt-4">
+          <button
+            onClick={() => setShowFilter((prev) => !prev)}
+            className="text-sm text-cyan-600 underline hover:text-cyan-800 transition"
+          >
+            {showFilter ? "Ocultar Filtros" : "Filtrar prendas"}
+          </button>
+          </div>
+
+          {showFilter && (
+            <div className="mt-4">
+              <FilterClothes onFilter={onFilter} />
+            </div>
+          )}
           </div>
           {garments.map((garment, index) => (
             <div
               key={garment.id}
               className="relative group rounded-lg overflow-hidden shadow-lg w-40 h-40 mx-auto"
+              draggable={true}
+              onDragStart={(e) => {
+                e.dataTransfer.setData("application/json", JSON.stringify(garment));
+              }}
             >
               <div className="relative w-full h-full">
                 <Image
-                  src={garment.image.secure_url}
+                  src={garment.imageUrl}
                   alt={`Prenda ${index + 1}`}
                   fill
                   className="object-cover transition-transform duration-300 transform group-hover:scale-110"
@@ -42,10 +67,10 @@ export default function Wardrobe({ garments, onDeleteGarment }: WardrobeProps) {
                   <div className="flex flex-wrap gap-1 mb-2">
                     {garment.tags.map((tag) => (
                       <span
-                        key={tag}
+                        key={tag.id}
                         className="bg-gray-200 text-gray-800 text-xs px-2 py-1 rounded"
                       >
-                        {tag}
+                        {tag.name}
                       </span>
                     ))}
                   </div>
@@ -60,6 +85,7 @@ export default function Wardrobe({ garments, onDeleteGarment }: WardrobeProps) {
             </div>
           ))}
         </div>
+      </>
       ) : (
         <Armario />
       )}
