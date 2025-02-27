@@ -11,7 +11,6 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [isUpperCase, setIsUpperCase] = useState(false);
   const [isNumber, setIsNumber] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);  
   const router = useRouter(); 
 
   const validatePassword = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -89,8 +88,6 @@ const Register = () => {
     }
   };
 
-  const handleBlur = () => setIsFocused(false);
-  const handleFocus = () => setIsFocused(true);
   const handleLoginRedirect = () => router.push("/");
 
   return (
@@ -139,8 +136,6 @@ const Register = () => {
                 id="password"
                 value={password}
                 onChange={validatePassword}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
                 className="mt-2 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Tu contraseña"
               />
