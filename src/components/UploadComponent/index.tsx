@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import Script from 'next/script';
 import { CloudinaryImage } from '@/interfaces/Images';
 
@@ -20,6 +20,8 @@ interface UploadWidgetProps {
 }
 
 export default function UploadWidget({ onUploadSuccess }: UploadWidgetProps) {
+  const [cloudinaryReady, setCloudinaryReady] = useState(false);
+
   const handleUpload = useCallback(() => {
     if (!window.cloudinary) {
       console.error("Cloudinary no está listo.");
@@ -49,12 +51,14 @@ export default function UploadWidget({ onUploadSuccess }: UploadWidgetProps) {
       <Script
         src="https://widget.cloudinary.com/v2.0/global/all.js"
         strategy="beforeInteractive"
+        onLoad={() => setCloudinaryReady(true)}
       />
       <button 
         onClick={handleUpload}
-        className="px-4 py-2 bg-cyan-500 text-white rounded-full hover:bg-cyan-600 transition-all duration-150"
+        disabled={!cloudinaryReady}
+        className={`px-4 py-2 rounded-full transition-all duration-150 ${cloudinaryReady ? 'bg-cyan-500 text-white hover:bg-cyan-600' : 'bg-gray-400 text-gray-300 cursor-not-allowed'}`}
       >
-        Cargar Prenda
+        {cloudinaryReady ? 'Cargar Prenda' : 'Cargando...'}
       </button>
     </div>
   );
