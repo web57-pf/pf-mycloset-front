@@ -25,7 +25,6 @@ export default function MyCloset() {
   const [newImage, setNewImage] = useState<CloudinaryImage | null>(null);
   const [savedGarments, setSavedGarments] = useState<Garment[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [ setShowFilter] = useState(false);
 
   const { user } = useAuth();
 
@@ -112,7 +111,6 @@ export default function MyCloset() {
     <div className="relative flex flex-row w-full min-h-screen bg-background">
       <div className="relative flex flex-1 flex-col">
         <Wardrobe garments={savedGarments} onDeleteGarment={handleDeleteGarment} onFilter={handleFilter} />
-
 
         {!isDrawerOpen && (
           <button

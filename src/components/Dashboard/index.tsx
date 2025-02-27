@@ -21,21 +21,14 @@ export default function Dashboard({ onUploadSuccess, newImage, onSaveGarment }: 
 
   return (
     <div className="relative flex flex-col h-full p-4">
-      <Script
-        src="https://widget.cloudinary.com/v2.0/global/all.js"
-        strategy="beforeInteractive"
-      />
-      <h1 className="text-2xl mb-4 text-center">
-        Bienvenido/a {user?.email}
-      </h1>
+      <Script src="https://widget.cloudinary.com/v2.0/global/all.js" strategy="afterInteractive" />
+      
+      <h1 className="text-2xl mb-4 text-center">Bienvenido/a {user?.email}</h1>
 
       <div className="flex-grow w-full">
-        <GarmentManager
-          newImage={newImage}
-          onUploadSuccess={onUploadSuccess}
-          onSaveGarment={onSaveGarment}
-        />
+        <GarmentManager newImage={newImage} onSaveGarment={onSaveGarment} />
       </div>
+
       {showUpload && (
         <div className="mb-4">
           <UploadWidget
@@ -49,6 +42,3 @@ export default function Dashboard({ onUploadSuccess, newImage, onSaveGarment }: 
     </div>
   );
 }
-
-
-
