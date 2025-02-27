@@ -11,11 +11,11 @@ import { Garment } from "../Wardrobe";
 interface DashboardProps {
   onUploadSuccess: (image: CloudinaryImage) => void;
   newImage: CloudinaryImage | null;
-  onSaveGarment: (garment: any) => void;
+  onSaveGarment: (garment: Garment) => void;
   savedGarments: Garment[];
 }
 
-export default function Dashboard({ onUploadSuccess, newImage, onSaveGarment, savedGarments }: DashboardProps) {
+export default function Dashboard({ onUploadSuccess, newImage, onSaveGarment }: DashboardProps) {
   const { user } = useAuth();
   const [showUpload, setShowUpload] = useState(true);
 
@@ -29,13 +29,12 @@ export default function Dashboard({ onUploadSuccess, newImage, onSaveGarment, sa
         Bienvenido/a {user?.email}
       </h1>
 
-
       <div className="flex-grow w-full">
         <GarmentManager
           newImage={newImage}
           onUploadSuccess={onUploadSuccess}
           onSaveGarment={onSaveGarment}
-          />
+        />
       </div>
       {showUpload && (
         <div className="mb-4">
@@ -50,3 +49,6 @@ export default function Dashboard({ onUploadSuccess, newImage, onSaveGarment, sa
     </div>
   );
 }
+
+
+

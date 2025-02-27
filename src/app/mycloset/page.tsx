@@ -10,7 +10,6 @@ import Link from "next/link";
 import axios from "axios";
 import { Tag } from "@/components/WDManager";
 import { useAuth } from "@/contexts/authContext";
-import FilterClothes from "@/components/FilterClothes";
 
 export interface Clothe {
   name: string;
@@ -26,7 +25,7 @@ export default function MyCloset() {
   const [newImage, setNewImage] = useState<CloudinaryImage | null>(null);
   const [savedGarments, setSavedGarments] = useState<Garment[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [showFilter, setShowFilter] = useState(false);
+  const [ setShowFilter] = useState(false);
 
   const { user } = useAuth();
 
@@ -104,7 +103,6 @@ export default function MyCloset() {
         }
       );
       setSavedGarments(response.data);
-      setShowFilter(false);
     } catch (error) {
       console.error("Error filtrando garments:", error);
     }
