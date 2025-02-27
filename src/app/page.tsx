@@ -1,4 +1,3 @@
-// Home.tsx
 import AnimatedPage from "@/components/AnimatedPage";
 import TextBoxHome from "@/components/TextBoxHome";
 import Image from "next/image";
