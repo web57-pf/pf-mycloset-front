@@ -4,7 +4,6 @@ import { useState } from "react";
 import Swal from "sweetalert2";  
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { inherits } from "util";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -17,10 +16,6 @@ const Register = () => {
 
   interface PasswordValidationEvent extends React.ChangeEvent<HTMLInputElement> {}
 
-  interface PasswordValidationState {
-    isUpperCase: boolean;
-    isNumber: boolean;
-  }
 
   const validatePassword = (e: PasswordValidationEvent): void => {
     const passwordValue: string = e.target.value;

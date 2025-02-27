@@ -5,7 +5,6 @@ import { CloudinaryImage } from "@/interfaces/Images";
 import { Garment } from "@/components/Wardrobe";
 import axios from "axios";
 import categories from "@/helpers/categories";
-import UploadWidget from "../UploadComponent";
 import DropBox from "../DropBox";
 
 export interface Tag {
@@ -23,15 +22,13 @@ export interface Category {
 interface GarmentManagerProps {
   newImage: CloudinaryImage | null;
   onSaveGarment: (garment: Garment) => void;
-  onUploadSuccess: (image: CloudinaryImage) => void;
 }
 
-export default function GarmentManager({ newImage, onSaveGarment, onUploadSuccess }: GarmentManagerProps) {
+export default function GarmentManager({ newImage, onSaveGarment }: GarmentManagerProps) {
   const [pendingImage, setPendingImage] = useState<CloudinaryImage | null>(null);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [availableTags, setAvailableTags] = useState<Tag[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
-  const [droppedGarment, setDroppedGarment] = useState<Garment | null>(null);
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -82,7 +79,6 @@ export default function GarmentManager({ newImage, onSaveGarment, onUploadSucces
 
   const handleDropItem = (garment: Garment) => {
     console.log("Prenda recibida en DropBox:", garment);
-    setDroppedGarment(garment);
   };
 
   return (
