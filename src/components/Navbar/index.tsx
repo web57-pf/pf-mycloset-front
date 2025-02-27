@@ -1,40 +1,52 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
-import { FaInstagram, FaFacebook, FaWhatsapp } from "react-icons/fa"; 
+import { FaInstagram, FaFacebook, FaWhatsapp, FaUser } from "react-icons/fa";
+import { useAuth } from "@/contexts/authContext";
 
-export const Navbar = () => {
+const Navbar = () => {
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    logout();
+  };
+
   return (
     <nav>
       <div className="bg-[#C3DEF4] flex justify-between items-center p-4">
         <div className="flex space-x-4">
-          <Link href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">
-            <FaInstagram 
-              className="text-xl text-gray-600 cursor-pointer hover:text-[#E4405F]"
-            />
+          <Link href="https://www.instagram.com" target="_blank">
+            <FaInstagram className="text-xl text-gray-600 cursor-pointer hover:text-[#E4405F]" />
           </Link>
-          <Link href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">
-            <FaFacebook 
-              className="text-xl text-gray-600 cursor-pointer hover:text-blue-600" 
-            />
+          <Link href="https://www.facebook.com" target="_blank">
+            <FaFacebook className="text-xl text-gray-600 cursor-pointer hover:text-blue-600" />
           </Link>
-          <Link
-            href="https://wa.me/1234567890?text=Hola!%20Quisiera%20obtener%20más%20información." 
-            target="_blank" 
-            rel="noopener noreferrer"
-          >
-            <FaWhatsapp 
-              className="text-xl text-gray-600 cursor-pointer hover:text-green-500" 
-            />
+          <Link href="https://wa.me/1234567890?text=Hola!%20Quisiera%20obtener%20más%20información." target="_blank">
+            <FaWhatsapp className="text-xl text-gray-600 cursor-pointer hover:text-green-500" />
           </Link>
         </div>
 
-        <div className="flex space-x-6 bg">
-          <Link href="/login">
-          <span className="text-sm text-black cursor-pointer hover:text-blue-500 transition-all duration-150">Iniciar sesión</span>
-          </Link>
-          <Link href="/signup">
-          <span className="text-sm text-black cursor-pointer hover:text-blue-500 transition-all duration-150">Registrarse</span>
-          </Link>
+        <div className="flex space-x-6">
+          {!user ? (
+            <>
+              <Link href="/login">
+                <span className="text-sm text-black cursor-pointer hover:text-blue-500 transition-all duration-150">Iniciar sesión</span>
+              </Link>
+              <Link href="/signup">
+                <span className="text-sm text-black cursor-pointer hover:text-blue-500 transition-all duration-150">Registrarse</span>
+              </Link>
+            </>
+          ) : (
+            <>
+              <FaUser className="text-xl text-gray-600 cursor-pointer hover:text-[#15803D]" />
+              <button
+                onClick={handleLogout}
+                className="text-sm text-black cursor-pointer hover:text-blue-500 transition-all duration-150"
+              >
+                Cerrar sesión
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -45,10 +57,10 @@ export const Navbar = () => {
 
         <div className="flex p-4 space-x-6">
           <Link href="/mycloset">
-          <span className="text-sm text-gray-700 cursor-pointer hover:text-blue-500 transition-all duration-150">Mi Armario</span>
+            <span className="text-sm text-gray-700 cursor-pointer hover:text-blue-500 transition-all duration-150">Mi Armario</span>
           </Link>
-          <Link href="/aboutus">
-          <span className="text-sm text-gray-700 cursor-pointer hover:text-blue-500 transition-all duration-150">Sobre Nosotros</span>
+          <Link href="/sobre-nosotros">
+            <span className="text-sm text-gray-700 cursor-pointer hover:text-blue-500 transition-all duration-150">Sobre Nosotros</span>
           </Link>
         </div>
       </div>
