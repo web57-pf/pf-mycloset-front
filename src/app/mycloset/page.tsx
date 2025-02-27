@@ -1,16 +1,13 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import Drawer from "@/components/Drawer";
 import Dashboard from "@/components/Dashboard";
 import Wardrobe, { Garment } from "@/components/Wardrobe";
 import { CloudinaryImage } from "@/interfaces/Images";
-import Image from "next/image";
-import Link from "next/link";
 import axios from "axios";
 import { Tag } from "@/components/WDManager";
 import { useAuth } from "@/contexts/authContext";
-import FilterClothes from "@/components/FilterClothes";
+import { OutfitGarments } from "@/components/DropBox";
 
 export interface Clothe {
   name: string;
@@ -25,8 +22,8 @@ export interface Clothe {
 export default function MyCloset() {
   const [newImage, setNewImage] = useState<CloudinaryImage | null>(null);
   const [savedGarments, setSavedGarments] = useState<Garment[]>([]);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [showFilter, setShowFilter] = useState(false);
+  const [allGarments, setAllGarments] = useState<Garment[]>([]);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const { user } = useAuth();
 
@@ -38,6 +35,7 @@ export default function MyCloset() {
           { withCredentials: true }
         );
         setSavedGarments(response.data);
+        setAllGarments(response.data);
       } catch (error) {
         console.error("Error obteniendo garments:", error);
       }
@@ -58,8 +56,7 @@ export default function MyCloset() {
 
     try {
       const payload = {
-        user: user.id,
-        name: garment.category.name.padEnd(20, " ") + garment.category.name,
+        name: garment.category.name,
         categoryId: garment.category.id,
         type: "default",
         imageUrl: garment.imageUrl,
@@ -74,6 +71,7 @@ export default function MyCloset() {
         { withCredentials: true }
       );
       setSavedGarments((prev) => [...prev, response.data]);
+      setAllGarments((prev) => [...prev, response.data]);
       setNewImage(null);
     } catch (error) {
       console.error("Error guardando garment:", error);
@@ -86,6 +84,7 @@ export default function MyCloset() {
         withCredentials: true,
       });
       setSavedGarments((prev) => prev.filter((g) => g.id !== id));
+      setAllGarments((prev) => prev.filter((g) => g.id !== id));
     } catch (error) {
       console.error("Error eliminando garment:", error);
     }
@@ -104,36 +103,49 @@ export default function MyCloset() {
         }
       );
       setSavedGarments(response.data);
-      setShowFilter(false);
     } catch (error) {
       console.error("Error filtrando garments:", error);
     }
   };
 
+  const handleClearFilter = () => {
+    setSavedGarments(allGarments);
+  };
+
+  const handleCreateOutfit = async ({ name, garmentIds }: OutfitGarments) => {
+    try {
+      const payload = {
+        name: name,
+        clothesIds: garmentIds,
+      }
+
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/combinations/create-combination`, 
+      payload, { withCredentials: true }
+      );
+      setMessage({ type: "success", text: "Outfit creado correctamente." });
+      setTimeout(() => setMessage(null), 3000);
+    } catch (error) {
+      console.error("Error guardando outfit:", error);
+      setMessage({ type: "error", text: "Hubo un error al crear el outfit." });
+      setTimeout(() => setMessage(null), 3000);
+    }
+  };
+
   return (
     <div className="relative flex flex-row w-full min-h-screen bg-background">
-      <div className="relative flex flex-1 flex-col">
-        <Wardrobe garments={savedGarments} onDeleteGarment={handleDeleteGarment} onFilter={handleFilter} />
+      {message && (
+        <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded shadow-lg ${message.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
+          {message.text}
+        </div>
+      )}
+      <div className="relative flex flex-1 flex-col min-h-screen">
+        <Wardrobe 
+          garments={savedGarments} 
+          onDeleteGarment={handleDeleteGarment} 
+          onFilter={handleFilter}
+          onClearFilter={handleClearFilter} 
+        />
 
-
-        {!isDrawerOpen && (
-          <button
-            onClick={() => setIsDrawerOpen(true)}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-cyan-500 text-white w-9 h-12 rounded-r-full rounded-l-none shadow-lg hover:bg-cyan-600 transition-colors z-50"
-            title="Abrir menú"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 mx-auto"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        )}
       </div>
 
       <div className="flex flex-col flex-1">
@@ -141,44 +153,9 @@ export default function MyCloset() {
           onUploadSuccess={handleUploadSuccess}
           newImage={newImage}
           onSaveGarment={handleSaveGarment}
-          savedGarments={savedGarments}
+          onCreateOutfit={handleCreateOutfit}
         />
       </div>
-
-      <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
-        <div className="flex flex-col items-center justify-center">
-          <Image src="/menu2.png" alt="menu" width={200} height={200} />
-        </div>
-        <div className="mt-4 justify-center items-center">
-          <h2 className="text-xl font-bold flex flex-col items-center">Menú</h2>
-          <ul className="mt-4 flex flex-col gap-4">
-            <li className="flex flex-col items-center">
-              <Link
-                href="/mycloset/account"
-                className="text-gray-700 font-bold hover:text-cyan-600 transition-all duration-150"
-              >
-                Mi Cuenta
-              </Link>
-            </li>
-            <li className="flex flex-col items-center">
-              <Link
-                href="/mycloset/wardrobe"
-                className="text-gray-700 font-bold hover:text-cyan-600 transition-all duration-150"
-              >
-                Mis Prendas
-              </Link>
-            </li>
-            <li className="flex flex-col items-center">
-              <Link
-                href="/mycloset/outfits"
-                className="text-gray-700 font-bold hover:text-cyan-600 transition-all duration-150"
-              >
-                Mis Outfits
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </Drawer>
     </div>
   );
 }

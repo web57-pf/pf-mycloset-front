@@ -1,12 +1,11 @@
 'use client';
-
 import { useState, useEffect } from "react";
 import { CloudinaryImage } from "@/interfaces/Images";
 import { Garment } from "@/components/Wardrobe";
 import axios from "axios";
-import categories from "@/helpers/categories";
 import UploadWidget from "../UploadComponent";
-import DropBox from "../DropBox";
+import DropBox, { OutfitGarments } from "../DropBox";
+import fetchCategories from "@/helpers/categories";
 
 export interface Tag {
   id: string;
@@ -24,14 +23,16 @@ interface GarmentManagerProps {
   newImage: CloudinaryImage | null;
   onSaveGarment: (garment: Garment) => void;
   onUploadSuccess: (image: CloudinaryImage) => void;
+  onCreateOutfit: (outfit: OutfitGarments) => void;
 }
 
-export default function GarmentManager({ newImage, onSaveGarment, onUploadSuccess }: GarmentManagerProps) {
+export default function GarmentManager({ newImage, onSaveGarment, onUploadSuccess, onCreateOutfit }: GarmentManagerProps) {
   const [pendingImage, setPendingImage] = useState<CloudinaryImage | null>(null);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [availableTags, setAvailableTags] = useState<Tag[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [droppedGarment, setDroppedGarment] = useState<Garment | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -44,6 +45,16 @@ export default function GarmentManager({ newImage, onSaveGarment, onUploadSucces
     };
 
     fetchTags();
+  }, []);
+
+  useEffect(() => {
+    fetchCategories()
+      .then((response) => {
+        setCategories(response);
+      })
+      .catch((error) => {
+        console.error("Error obteniendo categorias:", error);
+      });
   }, []);
 
   useEffect(() => {
@@ -66,7 +77,7 @@ export default function GarmentManager({ newImage, onSaveGarment, onUploadSucces
   };
 
   const handleSave = () => {
-    if (pendingImage && selectedTags.length >= 3 && selectedCategory) {
+    if (pendingImage && selectedTags.length >= 1 && selectedCategory) {
       const newGarment: Garment = {
         id: Date.now().toString(),
         imageUrl: pendingImage.secure_url,
@@ -133,9 +144,9 @@ export default function GarmentManager({ newImage, onSaveGarment, onUploadSucces
 
             <button
               onClick={handleSave}
-              disabled={selectedTags.length < 3 || !selectedCategory}
+              disabled={selectedTags.length < 1 || !selectedCategory}
               className={`w-full px-4 py-2 rounded transition-colors ${
-                selectedTags.length < 3 || !selectedCategory
+                selectedTags.length < 1 || !selectedCategory
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-green-500 text-white hover:bg-green-600"
               }`}
@@ -146,7 +157,11 @@ export default function GarmentManager({ newImage, onSaveGarment, onUploadSucces
         </div>
       ) : (
         <div className="flex flex-col items-center w-full">
-          <DropBox onDropItem={handleDropItem} />
+          <DropBox onDropItem={handleDropItem} onCreateOutfit={onCreateOutfit} />
+          <div className="flex justify-end p-8 w-full">
+          <UploadWidget onUploadSuccess={onUploadSuccess} />
+          </div>
+          
         </div>
       )}
     </div>
