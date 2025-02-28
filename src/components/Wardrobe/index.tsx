@@ -8,6 +8,7 @@ import FilterClothes from "../FilterClothes";
 
 export interface Garment {
   id: string;
+  name: string;
   imageUrl: string;
   tags: Tag[];
   category: Category;
@@ -76,6 +77,11 @@ export default function Wardrobe({ garments, onDeleteGarment, onFilter, onClearF
                       {tag.name}
                     </span>
                   ))}
+                  {(garment.name ?? "").length > 0 && (
+                    <span className="bg-gray-200 text-gray-800 text-xs px-2 py-1 rounded">
+                      {garment.name}
+                    </span>
+                  )}
                   </div>
                   <button
                     onClick={() => onDeleteGarment(garment.id)}

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
-import { FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaTimes, FaCheck } from 'react-icons/fa';
 
 interface Tag {
   id: string;
@@ -68,7 +68,7 @@ export default function MyOutfitsPage() {
   const handleEditOutfit = async (id: string) => {
     try {
       const payload = { name: editingOutfitName };
-      const response = await axios.put(
+      await axios.put(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/combinations/${id}`,
         payload,
         { withCredentials: true }
@@ -79,6 +79,25 @@ export default function MyOutfitsPage() {
       setSelectedOutfit(null);
     } catch (err) {
       console.error("Error al editar el outfit:", err);
+    }
+  };
+
+  const handleRemoveGarmentFromOutfit = async (garmentId: string) => {
+    if (!selectedOutfit) return;
+    const newClothes = selectedOutfit.clothes.filter(c => c.id !== garmentId);
+    const newClothesIds = newClothes.map(c => c.id);
+    try {
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/combinations/${selectedOutfit.id}`,
+        { clothesIds: newClothesIds },
+        { withCredentials: true }
+      );
+      setSelectedOutfit({ ...selectedOutfit, clothes: newClothes });
+      setOutfits(prev =>
+        prev.map(outfit => outfit.id === selectedOutfit.id ? { ...outfit, clothes: newClothes } : outfit)
+      );
+    } catch (err) {
+      console.error("Error al remover la prenda del outfit:", err);
     }
   };
 
@@ -170,7 +189,7 @@ export default function MyOutfitsPage() {
             <div>
               <h3 className="text-xl font-base text-gray-800 mb-4">Prendas</h3>
               {selectedOutfit.clothes.map(clothe => (
-                <div key={clothe.id} className="flex items-center gap-4 mb-4 border-b pb-2">
+                <div key={clothe.id} className="flex items-center gap-4 mb-4 border-b pb-2 relative">
                   <div className="relative w-20 h-20 rounded overflow-hidden">
                     <Image
                       src={clothe.imageUrl}
@@ -178,6 +197,12 @@ export default function MyOutfitsPage() {
                       fill
                       className="object-cover"
                     />
+                    <button
+                      onClick={() => handleRemoveGarmentFromOutfit(clothe.id)}
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 hover:bg-red-700"
+                    >
+                      <FaTimes size={12} />
+                    </button>
                   </div>
                   <div>
                     <p className="text-lg font-semibold text-gray-800">{clothe.name}</p>
@@ -198,7 +223,7 @@ export default function MyOutfitsPage() {
                 onClick={() => handleEditOutfit(selectedOutfit.id)}
                 className="flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded hover:bg-green-600 transition"
               >
-                <FaEdit /> Editar
+                <FaCheck /> Guardar
               </button>
               <button
                 onClick={() => handleDeleteOutfit(selectedOutfit.id)}

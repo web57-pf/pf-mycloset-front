@@ -56,7 +56,7 @@ export default function MyCloset() {
 
     try {
       const payload = {
-        name: garment.category.name,
+        name: garment.name,
         categoryId: garment.category.id,
         type: "default",
         imageUrl: garment.imageUrl,

@@ -33,6 +33,7 @@ export default function GarmentManager({ newImage, onSaveGarment, onUploadSucces
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [droppedGarment, setDroppedGarment] = useState<Garment | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [name, setName] = useState<string>("");
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -79,6 +80,7 @@ export default function GarmentManager({ newImage, onSaveGarment, onUploadSucces
   const handleSave = () => {
     if (pendingImage && selectedTags.length >= 1 && selectedCategory) {
       const newGarment: Garment = {
+        name: name,
         id: Date.now().toString(),
         imageUrl: pendingImage.secure_url,
         tags: selectedTags,
@@ -102,11 +104,11 @@ export default function GarmentManager({ newImage, onSaveGarment, onUploadSucces
         <div className="mb-8 max-w-lg mx-auto">
           <div className="bg-gray-50 opacity-80 p-6 rounded-lg shadow-md max-w-md mx-auto transition-all duration-300">
             <h3 className="text-xl font-semibold text-gray-800 mb-4 tracking-wide">
-              Asigna una categoría y selecciona al menos 3 tags para tu prenda
+              Asigna una categoría, un nombre y al menos 1 tag para tu prenda
             </h3>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Selecciona una categoría:
               </label>
               <select
@@ -124,6 +126,16 @@ export default function GarmentManager({ newImage, onSaveGarment, onUploadSucces
                   </option>
                 ))}
               </select>
+              <label className="block text-sm font-medium text-gray-700 mt-4 mb-1">
+                Nombre de la prenda:
+              </label>
+              <input
+                type="text"
+                name="name"
+                className="w-full mb-4 border-gray-300 rounded-md shadow-sm focus:border-cyan-500 focus:ring-cyan-500"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
             </div>
 
             <div className="flex flex-wrap gap-2 mb-4">
