@@ -66,7 +66,7 @@ export default function Drawer({ isOpen, onClose, children }: DrawerProps) {
           </div>
           <button
             onClick={handleLogout}
-            className="absolute bottom-0 right-0 p-4 bg-red-500 text-white hover:bg-red-600 transition-colors z-50"
+            className="absolute bottom-0 right-0 p-4 text-black hover:text-red-500 transition-colors z-50"
             title="Cerrar sesión"
           >Cerrar Sesión</button>
         </div>

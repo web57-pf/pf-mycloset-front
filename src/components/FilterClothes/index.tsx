@@ -15,9 +15,10 @@ export interface Category {
 
 interface FilterClothesProps {
   onFilter: (categoryId: string, tagIds: string[]) => void;
+  onClearFilter: () => void;
 }
 
-export default function FilterClothes({ onFilter }: FilterClothesProps) {
+export default function FilterClothes({ onFilter, onClearFilter }: FilterClothesProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -66,6 +67,12 @@ export default function FilterClothes({ onFilter }: FilterClothesProps) {
     onFilter(selectedCategory, selectedTags);
   };
 
+  const handleClear = () => {
+    setSelectedCategory("");
+    setSelectedTags([]);
+    onClearFilter();
+  };
+
   return (
     <div className="bg-gray-50 opacity-80 p-6 rounded-lg shadow-md max-w-md mx-auto transition-all duration-300">
       <h3 className="text-xl font-semibold text-gray-800 mb-4 tracking-wide">
@@ -108,12 +115,20 @@ export default function FilterClothes({ onFilter }: FilterClothesProps) {
           ))}
         </div>
       </div>
-      <button
-        onClick={handleFilter}
-        className="w-full py-2 bg-cyan-500 text-white rounded-lg shadow hover:bg-cyan-600 transition-all duration-300"
-      >
-        Aplicar filtros
-      </button>
+      <div className="flex gap-4">
+        <button
+          onClick={handleFilter}
+          className="w-full py-2 bg-cyan-500 text-white rounded-lg shadow hover:bg-cyan-600 transition-all duration-300"
+        >
+          Aplicar filtros
+        </button>
+        <button
+          onClick={handleClear}
+          className="w-full py-2 bg-gray-300 text-black rounded-lg shadow hover:bg-gray-400 transition-all duration-300"
+        >
+          Limpiar filtros
+        </button>
+      </div>
     </div>
   );
 }
