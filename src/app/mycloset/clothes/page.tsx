@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import axios, { Axios, AxiosError } from "axios";
+import axios from "axios";
 import Image from "next/image";
 import { FaEdit, FaTrash, FaTimes } from "react-icons/fa";
 import fetchCategories from "@/helpers/categories";
