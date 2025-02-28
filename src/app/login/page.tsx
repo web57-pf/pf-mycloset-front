@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import Swal from "sweetalert2";
 import Image from "next/image";
+import { useAuth } from "@/contexts/authContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const { setUser } = useAuth();
 
   const handleGoogleLogin = () => {
     window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
@@ -48,6 +50,8 @@ const Login = () => {
         const data: LoginResponse = await response.json();
         console.log("Usuario autenticado:", data);
 
+        setUser(data.user)
+
         Swal.fire({
           title: "¡Bienvenido!",
           text: "Has iniciado sesión correctamente.",
@@ -75,9 +79,11 @@ const Login = () => {
           method: "GET",
           credentials: "include",
         });
+        console.log("Respuesta de session:", response);
         if (response.ok) {
           const user = await response.json();
           console.log("Usuario autenticado:", user);
+
 
           Swal.fire({
             title: "Sesión activa",
@@ -94,7 +100,7 @@ const Login = () => {
       }
     };
     checkSession();
-  }, [router]);
+  }, [router,]);
 
   return (
     <div className="flex h-screen bg-inherit">
