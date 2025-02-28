@@ -1,6 +1,5 @@
 'use client';
 import Image from "next/image";
-import Link from "next/link";
 import Armario from "../WDAnimation";
 import { Category, Tag } from "../WDManager";
 import { useState } from "react";
