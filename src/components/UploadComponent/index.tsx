@@ -6,8 +6,20 @@ import { CloudinaryImage } from '@/interfaces/Images';
 
 declare global {
   interface Window {
-    cloudinary: any;
+    cloudinary?: Cloudinary;
   }
+}
+
+interface Cloudinary {
+  createUploadWidget: (
+    options: { cloudName: string; uploadPreset: string },
+    callback: (error: Error | null, result?: CloudinaryUploadResult) => void
+  ) => { open: () => void };
+}
+
+interface CloudinaryUploadResult {
+  event: string;
+  info?: CloudinaryImage;
 }
 
 interface UploadWidgetProps {
@@ -32,23 +44,21 @@ export default function UploadWidget({ onUploadSuccess }: UploadWidgetProps) {
     setIsUploading(true);
     const widget = window.cloudinary.createUploadWidget(
       {
-        cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-        uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
+        cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!,
+        uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!,
       },
-      (error: any, result: any): void => {
+      (error: Error | null, result?: CloudinaryUploadResult): void => {
         if (!error && result) {
-          if (result.event === 'success') {
+          if (result.event === 'success' && result.info) {
             console.log('Imagen subida exitosamente:', result.info);
             onUploadSuccess(result.info);
-            setIsUploading(false);
           } else if (result.event === 'close') {
             console.log("Widget cerrado sin subir imagen");
-            setIsUploading(false);
           }
         } else if (error) {
           console.error('Error en la carga:', error);
-          setIsUploading(false);
         }
+        setIsUploading(false);
       }
     );
     widget.open();

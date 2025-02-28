@@ -39,13 +39,12 @@ export default function MyOutfitsPage() {
   useEffect(() => {
     const fetchOutfits = async () => {
       try {
-        const response = await axios.get(
+        const response = await axios.get<Combination[]>(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/combinations/user-combinations`,
           { withCredentials: true }
         );
-        const combos: Combination[] = response.data;
-        setOutfits(combos);
-      } catch (err: any) {
+        setOutfits(response.data);
+      } catch (err) {
         console.error("Error al cargar tus outfits:", err);
         setError("Hubo un error al cargar tus outfits.");
       } finally {
@@ -68,11 +67,8 @@ export default function MyOutfitsPage() {
   const handleEditOutfit = async (id: string) => {
     try {
       const payload = { name: editingOutfitName };
-      const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/combinations/${id}`,
-        payload,
-        { withCredentials: true }
-      );
+      await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/combinations/${id}`, payload, { withCredentials: true });
+
       setOutfits(prev =>
         prev.map(outfit => (outfit.id === id ? { ...outfit, name: editingOutfitName } : outfit))
       );

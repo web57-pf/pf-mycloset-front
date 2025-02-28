@@ -31,7 +31,6 @@ export default function GarmentManager({ newImage, onSaveGarment, onUploadSucces
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [availableTags, setAvailableTags] = useState<Tag[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
-  const [droppedGarment, setDroppedGarment] = useState<Garment | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
@@ -93,7 +92,6 @@ export default function GarmentManager({ newImage, onSaveGarment, onUploadSucces
 
   const handleDropItem = (garment: Garment) => {
     console.log("Prenda recibida en DropBox:", garment);
-    setDroppedGarment(garment);
   };
 
   return (
@@ -159,9 +157,8 @@ export default function GarmentManager({ newImage, onSaveGarment, onUploadSucces
         <div className="flex flex-col items-center w-full">
           <DropBox onDropItem={handleDropItem} onCreateOutfit={onCreateOutfit} />
           <div className="flex justify-end p-8 w-full">
-          <UploadWidget onUploadSuccess={onUploadSuccess} />
+            <UploadWidget onUploadSuccess={onUploadSuccess} />
           </div>
-          
         </div>
       )}
     </div>
