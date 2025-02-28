@@ -3,8 +3,6 @@ import { useState } from "react";
 import Image from "next/image";
 import { Garment } from "../Wardrobe";
 import OutfitCreationWindow from "../OutfitCreationWindow";
-import axios from "axios";
-import { on } from "events";
 
 interface DropBoxProps {
   onDropItem?: (item: Garment) => void;

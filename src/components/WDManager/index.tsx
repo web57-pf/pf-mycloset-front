@@ -96,6 +96,7 @@ export default function GarmentManager({ newImage, onSaveGarment, onUploadSucces
   const handleDropItem = (garment: Garment) => {
     console.log("Prenda recibida en DropBox:", garment);
     setDroppedGarment(garment);
+    console.log(droppedGarment)
   };
 
   return (

@@ -45,7 +45,7 @@ export default function MyOutfitsPage() {
         );
         const combos: Combination[] = response.data;
         setOutfits(combos);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error al cargar tus outfits:", err);
         setError("Hubo un error al cargar tus outfits.");
       } finally {

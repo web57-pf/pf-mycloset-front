@@ -119,7 +119,7 @@ export default function MyCloset() {
         clothesIds: garmentIds,
       }
 
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/combinations/create-combination`, 
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/combinations/create-combination`, 
       payload, { withCredentials: true }
       );
       setMessage({ type: "success", text: "Outfit creado correctamente." });

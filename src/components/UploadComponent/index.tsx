@@ -6,7 +6,15 @@ import { CloudinaryImage } from '@/interfaces/Images';
 
 declare global {
   interface Window {
-    cloudinary: any;
+    cloudinary: {
+      createUploadWidget: (
+        config: {
+          cloudName: string | undefined;
+          uploadPreset: string | undefined;
+        },
+        callback: (error: unknown, result?: { event: string; info: CloudinaryImage }) => void
+      ) => { open: () => void };
+    };
   }
 }
 
@@ -35,7 +43,7 @@ export default function UploadWidget({ onUploadSuccess }: UploadWidgetProps) {
         cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
         uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
       },
-      (error: any, result: any): void => {
+      (error: unknown, result: { event: string; info: CloudinaryImage } | undefined): void => {
         if (!error && result) {
           if (result.event === 'success') {
             console.log('Imagen subida exitosamente:', result.info);

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { Axios, AxiosError } from "axios";
 import Image from "next/image";
 import { FaEdit, FaTrash, FaTimes } from "react-icons/fa";
 import fetchCategories from "@/helpers/categories";
@@ -64,7 +64,7 @@ export default function AllClothesPage() {
         }
         setClothes(response.data);
         setError(null);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error al cargar las prendas:", err);
         setError("Hubo un error al cargar las prendas.");
       } finally {

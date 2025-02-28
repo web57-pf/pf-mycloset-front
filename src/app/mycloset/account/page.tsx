@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { FaSave, FaTrash, FaEdit, FaTimes } from "react-icons/fa";
+import { FaSave, FaEdit, FaTimes } from "react-icons/fa";
 import { useAuth } from "@/contexts/authContext";
 
 interface UserProfile {
@@ -71,20 +71,20 @@ function ProfilePage() {
     }
   };
 
-  const handleDelete = async () => {
-    if (!profile) return;
-    if (!window.confirm("¿Estás seguro de eliminar tu cuenta?")) return;
-    try {
-      await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${profile.id}`, {
-        withCredentials: true,
-      });
-      logout();
-    } catch (err) {
-      console.error("Error al eliminar cuenta:", err);
-      setError("Error al eliminar la cuenta.");
-      setTimeout(() => setError(null), 3000);
-    }
-  };
+  // const handleDelete = async () => {
+  //   if (!profile) return;
+  //   if (!window.confirm("¿Estás seguro de eliminar tu cuenta?")) return;
+  //   try {
+  //     await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${profile.id}`, {
+  //       withCredentials: true,
+  //     });
+  //     logout();
+  //   } catch (err) {
+  //     console.error("Error al eliminar cuenta:", err);
+  //     setError("Error al eliminar la cuenta.");
+  //     setTimeout(() => setError(null), 3000);
+  //   }
+  // };
 
   if (loading) {
     return (
