@@ -48,7 +48,7 @@ const Login = () => {
 
       if (response.ok) {
         const data: LoginResponse = await response.json();
-        console.log("Usuario autenticado:", data);
+        // console.log("Usuario autenticado:", data);
 
         setUser(data.user)
 
@@ -76,7 +76,7 @@ const Login = () => {
     const checkSession = async () => {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session`, { 
-          method: "GET",
+          method: "POST",
           credentials: "include",
         });
         console.log("Respuesta de session:", response);
