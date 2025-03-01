@@ -98,7 +98,7 @@ export default function AddGarmentModal({ onClose }: AddGarmentModalProps) {
                   />
                   <p className="text-xs text-center mt-1">{garment.name}</p>
                   <button
-                  onClick={() => handleAddToCart(garment)}
+                  onClick={() => console.log('Add garment:', garment.id)}
                   className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity">
                     <span className="px-2 py-1 bg-cyan-500 text-white rounded-full text-xs">
                       <FaPlus />
