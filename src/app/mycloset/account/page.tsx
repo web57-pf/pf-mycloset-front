@@ -14,6 +14,13 @@ interface UserProfile {
   isAdmin?: boolean;
 }
 
+interface UpdatedProfile {
+  name: string;
+  email: string;
+  currentPassword?: string;
+  password?: string;
+}
+
 function ProfilePage() {
   const { user } = useAuth();
   const [profile, setProfile] = useState<UserProfile>();
@@ -64,7 +71,7 @@ function ProfilePage() {
       return;
     }
     try {
-      const payload: any = {
+      const payload: UpdatedProfile = {
         name: profile.name,
         email: profile.email,
       };

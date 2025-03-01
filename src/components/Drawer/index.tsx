@@ -1,7 +1,5 @@
 'use client';
 
-import { useAuth } from "@/contexts/authContext";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 interface DrawerProps {
@@ -11,8 +9,6 @@ interface DrawerProps {
 }
 
 export default function Drawer({ isOpen, onClose, children }: DrawerProps) {
-  const router = useRouter();
-  const { logout } = useAuth(); 
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
