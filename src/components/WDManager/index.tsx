@@ -131,6 +131,7 @@ export default function GarmentManager({ newImage, onSaveGarment, onUploadSucces
                 Nombre de la prenda:
               </label>
               <input
+                required
                 type="text"
                 name="name"
                 className="w-full mb-4 border-gray-300 rounded-md shadow-sm focus:border-cyan-500 focus:ring-cyan-500"
@@ -158,7 +159,7 @@ export default function GarmentManager({ newImage, onSaveGarment, onUploadSucces
             <button
               onClick={handleSave}
               disabled={selectedTags.length < 1 || !selectedCategory}
-              className={`w-full px-4 py-2 rounded transition-colors ${
+              className={`w-full px-4 py-2 rounded-full transition-colors ${
                 selectedTags.length < 1 || !selectedCategory
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-green-500 text-white hover:bg-green-600"

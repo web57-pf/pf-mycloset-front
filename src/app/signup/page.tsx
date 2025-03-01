@@ -88,7 +88,7 @@ const Register = () => {
     }
   };
 
-  const handleLoginRedirect = () => router.push("/");
+  const handleLoginRedirect = () => router.push("/login");
 
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: "inherit" }}>

@@ -1,6 +1,5 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
-import { usePathname } from "next/navigation"; 
 
 interface User {
   id: string;
@@ -24,14 +23,13 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const pathname = usePathname(); 
+  const [user, setUser] = useState<User | null>(null); 
 
   useEffect(() => {
     const checkSession = async () => {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session`, {
-          method: "GET",
+          method: "POST",
           credentials: "include",
         });
 
@@ -48,7 +46,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     checkSession();
-  }, [pathname]); 
+  }, []); 
 
   const logout = async () => {
     try {

@@ -41,13 +41,13 @@ export default function OutfitCreationWindow({ onClose, onCreateOutfit }: Outfit
       <div className="flex flex-row gap-2">
       <button 
         onClick={onClose}
-        className="mt-4 w-fit px-3 py-1 rounded transition-colors bg-gray-400 text-white hover:bg-red-400"
+        className="mt-4 w-fit px-3 py-1 rounded-full transition-colors bg-gray-400 text-white hover:bg-red-400"
       >
         Volver
       </button>
       <button 
         type="submit"
-        className="mt-4 w-fit px-3 py-1 rounded transition-colors bg-cyan-400 text-white hover:bg-green-400"
+        className="mt-4 w-fit px-3 py-1 rounded-full transition-colors bg-cyan-400 text-white hover:bg-green-400"
       >
         Guardar
       </button>

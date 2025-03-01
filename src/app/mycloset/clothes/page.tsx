@@ -222,16 +222,20 @@ export default function AllClothesPage() {
             <div className="flex justify-end gap-4 mt-6">
               <button
                 onClick={() => handleUpdateClothe(selectedClothe.id)}
-                className="flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded hover:bg-green-500 transition"
+                className="flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-full hover:bg-green-500 transition"
               >
                 <FaEdit /> Guardar Cambios
               </button>
               <button
-                onClick={() => handleDeleteClothe(selectedClothe.id)}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-red-500 transition"
-              >
-                <FaTrash /> Eliminar Prenda
-              </button>
+              onClick={() => {
+                if (window.confirm("¿Estás seguro que deseas eliminar la prenda?")) {
+                  handleDeleteClothe(selectedClothe.id);
+                }
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-full hover:bg-red-500 transition"
+            >
+              <FaTrash /> Eliminar Prenda
+            </button>            
             </div>
           </div>
         </div>

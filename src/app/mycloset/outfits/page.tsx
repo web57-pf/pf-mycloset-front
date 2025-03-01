@@ -2,7 +2,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
-import { FaEdit, FaTrash, FaTimes, FaCheck } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaTimes, FaCheck, FaPlus } from 'react-icons/fa';
+import AddGarmentModal from '@/components/AddGarmentModal';
 
 interface Tag {
   id: string;
@@ -35,6 +36,7 @@ export default function MyOutfitsPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedOutfit, setSelectedOutfit] = useState<Combination | null>(null);
   const [editingOutfitName, setEditingOutfitName] = useState<string>('');
+  const [showAddGarmentModal, setShowAddGarmentModal] = useState(false);
 
   useEffect(() => {
     const fetchOutfits = async () => {
@@ -119,6 +121,11 @@ export default function MyOutfitsPage() {
 
   return (
     <div className="min-h-screen bg-background p-4 relative">
+      {showAddGarmentModal && 
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <AddGarmentModal onClose={() => setShowAddGarmentModal(false)} />
+      </div>
+      }
       <h1 className="text-4xl font-light text-center text-gray-800 mb-8">Mis Outfits</h1>
       {outfits.length === 0 ? (
         <div className="flex items-center justify-center">
@@ -156,7 +163,7 @@ export default function MyOutfitsPage() {
                   setSelectedOutfit(outfit);
                   setEditingOutfitName(outfit.name);
                 }}
-                className="mt-auto px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600 transition flex items-center gap-2"
+                className="mt-auto px-4 py-2 bg-cyan-500 text-white rounded-full w-fit hover:bg-cyan-600 transition flex items-center gap-2"
               >
                 <FaEdit /> Ver Detalles
               </button>
@@ -166,7 +173,7 @@ export default function MyOutfitsPage() {
       )}
 
       {selectedOutfit && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
           <div className="bg-gray-50 rounded-lg shadow-xl p-6 w-11/12 md:w-2/3 lg:w-1/2 relative">
             <button
               onClick={() => setSelectedOutfit(null)}
@@ -219,18 +226,34 @@ export default function MyOutfitsPage() {
               ))}
             </div>
             <div className="flex justify-end gap-4 mt-6">
+              <span className="mr-auto">
+              <button
+                onClick={() => setShowAddGarmentModal(true)}
+                className="mt-auto w-fit px-4 py-2 bg-[#00b289] text-white rounded-full hover:bg-[#24806c] transition flex items-center gap-2"
+              >
+                <FaPlus /> Añadir Prenda
+              </button> 
+              </span>
+              <span>
               <button
                 onClick={() => handleEditOutfit(selectedOutfit.id)}
-                className="flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded hover:bg-green-600 transition"
+                className="flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-full hover:bg-green-600 transition"
               >
                 <FaCheck /> Guardar
               </button>
+              </span>
+              <span>
               <button
-                onClick={() => handleDeleteOutfit(selectedOutfit.id)}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-red-500 transition"
+                onClick={() => {
+                  if (window.confirm("¿Estás seguro que deseas eliminar el outfit?")) {
+                    handleDeleteOutfit(selectedOutfit.id)}
+                  }
+                }
+                className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-full hover:bg-red-500 transition"
               >
                 <FaTrash /> Eliminar
               </button>
+              </span>
             </div>
           </div>
         </div>

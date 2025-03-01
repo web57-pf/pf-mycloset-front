@@ -109,15 +109,16 @@ export default function SimpleChatbot() {
             </button>
           </div>
 
-          <div className="flex-1 p-3 overflow-y-auto space-y-2 bg-gray-100">
+          <div className="flex-1 p-3 overflow-y-auto mb-4 
+            scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 bg-gray-100">
             {messages.map((msg, index) => (
               <div
                 key={index}
                 className={`
-                  max-w-[75%] p-2 rounded-md
+                  max-w-[75%] p-2 rounded-md text-gray-900
                   ${
                     msg.sender === "user"
-                      ? "bg-amber-300 ml-auto text-right"
+                      ? "bg-[#ffeb7c] ml-auto text-right"
                       : "bg-white mr-auto text-left"
                   }
                 `}
@@ -140,7 +141,7 @@ export default function SimpleChatbot() {
                   hover:bg-cyan-500
                   px-2
                   py-1
-                  rounded
+                  rounded-full
                   transition-colors
                 "
               >
@@ -158,7 +159,7 @@ export default function SimpleChatbot() {
                 flex-1
                 p-2
                 border border-gray-300
-                rounded-l-md
+                rounded-l-full
                 focus:outline-none
                 text-sm
               "
@@ -172,7 +173,7 @@ export default function SimpleChatbot() {
                 text-white
                 px-4
                 py-2
-                rounded-r-md
+                rounded-r-full
                 text-sm
               "
             >

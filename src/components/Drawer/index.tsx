@@ -14,12 +14,6 @@ export default function Drawer({ isOpen, onClose, children }: DrawerProps) {
   const router = useRouter();
   const { logout } = useAuth(); 
 
-  const handleLogout = () => {
-    logout();
-    onClose();
-    router.push("/");
-  };
-
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
     return () => {
@@ -64,11 +58,6 @@ export default function Drawer({ isOpen, onClose, children }: DrawerProps) {
           <div className="p-4">
             {children}
           </div>
-          <button
-            onClick={handleLogout}
-            className="absolute bottom-0 right-0 p-4 text-black hover:text-red-500 transition-colors z-50"
-            title="Cerrar sesión"
-          >Cerrar Sesión</button>
         </div>
       </div>
     </>
