@@ -17,13 +17,6 @@ const Login = () => {
     window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
   };
 
-  interface LoginResponse {
-    user: {
-      id: string;
-      email: string;
-    };
-  }
-
   interface LoginCredentials {
     email: string;
     password: string;
@@ -79,7 +72,7 @@ const Login = () => {
     );
 
     if (response.ok) {
-      await checkSession(); // Llamamos a checkSession para actualizar el estado del usuario
+      await checkSession(); 
 
       Swal.fire({
         title: "¡Bienvenido!",
@@ -103,7 +96,7 @@ const Login = () => {
 
   useEffect(() => {
     checkSession();
-  }, []); // Se ejecuta solo al montar el componente
+  }, []); 
 
   return (
     <div className="flex h-screen bg-inherit">
