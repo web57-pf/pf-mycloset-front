@@ -6,20 +6,16 @@ import { CloudinaryImage } from '@/interfaces/Images';
 
 declare global {
   interface Window {
-    cloudinary?: Cloudinary;
+    cloudinary: {
+      createUploadWidget: (
+        config: {
+          cloudName: string | undefined;
+          uploadPreset: string | undefined;
+        },
+        callback: (error: unknown, result?: { event: string; info: CloudinaryImage }) => void
+      ) => { open: () => void };
+    };
   }
-}
-
-interface Cloudinary {
-  createUploadWidget: (
-    options: { cloudName: string; uploadPreset: string },
-    callback: (error: Error | null, result?: CloudinaryUploadResult) => void
-  ) => { open: () => void };
-}
-
-interface CloudinaryUploadResult {
-  event: string;
-  info?: CloudinaryImage;
 }
 
 interface UploadWidgetProps {
@@ -44,21 +40,23 @@ export default function UploadWidget({ onUploadSuccess }: UploadWidgetProps) {
     setIsUploading(true);
     const widget = window.cloudinary.createUploadWidget(
       {
-        cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!,
-        uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!,
+        cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+        uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
       },
-      (error: Error | null, result?: CloudinaryUploadResult): void => {
+      (error: unknown, result: { event: string; info: CloudinaryImage } | undefined): void => {
         if (!error && result) {
-          if (result.event === 'success' && result.info) {
+          if (result.event === 'success') {
             console.log('Imagen subida exitosamente:', result.info);
             onUploadSuccess(result.info);
+            setIsUploading(false);
           } else if (result.event === 'close') {
             console.log("Widget cerrado sin subir imagen");
+            setIsUploading(false);
           }
         } else if (error) {
           console.error('Error en la carga:', error);
+          setIsUploading(false);
         }
-        setIsUploading(false);
       }
     );
     widget.open();

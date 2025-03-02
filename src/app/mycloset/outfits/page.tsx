@@ -2,7 +2,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
-import { FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaTimes, FaCheck, FaPlus } from 'react-icons/fa';
+import AddGarmentModal from '@/components/AddGarmentModal';
 
 interface Tag {
   id: string;
@@ -35,16 +36,18 @@ export default function MyOutfitsPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedOutfit, setSelectedOutfit] = useState<Combination | null>(null);
   const [editingOutfitName, setEditingOutfitName] = useState<string>('');
+  const [showAddGarmentModal, setShowAddGarmentModal] = useState(false);
 
   useEffect(() => {
     const fetchOutfits = async () => {
       try {
-        const response = await axios.get<Combination[]>(
+        const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/combinations/user-combinations`,
           { withCredentials: true }
         );
-        setOutfits(response.data);
-      } catch (err) {
+        const combos: Combination[] = response.data;
+        setOutfits(combos);
+      } catch (err: unknown) {
         console.error("Error al cargar tus outfits:", err);
         setError("Hubo un error al cargar tus outfits.");
       } finally {
@@ -67,14 +70,36 @@ export default function MyOutfitsPage() {
   const handleEditOutfit = async (id: string) => {
     try {
       const payload = { name: editingOutfitName };
-      await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/combinations/${id}`, payload, { withCredentials: true });
-
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/combinations/${id}`,
+        payload,
+        { withCredentials: true }
+      );
       setOutfits(prev =>
         prev.map(outfit => (outfit.id === id ? { ...outfit, name: editingOutfitName } : outfit))
       );
       setSelectedOutfit(null);
     } catch (err) {
       console.error("Error al editar el outfit:", err);
+    }
+  };
+
+  const handleRemoveGarmentFromOutfit = async (garmentId: string) => {
+    if (!selectedOutfit) return;
+    const newClothes = selectedOutfit.clothes.filter(c => c.id !== garmentId);
+    const newClothesIds = newClothes.map(c => c.id);
+    try {
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/combinations/${selectedOutfit.id}`,
+        { clothesIds: newClothesIds },
+        { withCredentials: true }
+      );
+      setSelectedOutfit({ ...selectedOutfit, clothes: newClothes });
+      setOutfits(prev =>
+        prev.map(outfit => outfit.id === selectedOutfit.id ? { ...outfit, clothes: newClothes } : outfit)
+      );
+    } catch (err) {
+      console.error("Error al remover la prenda del outfit:", err);
     }
   };
 
@@ -96,6 +121,11 @@ export default function MyOutfitsPage() {
 
   return (
     <div className="min-h-screen bg-background p-4 relative">
+      {showAddGarmentModal && 
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <AddGarmentModal onClose={() => setShowAddGarmentModal(false)} />
+      </div>
+      }
       <h1 className="text-4xl font-light text-center text-gray-800 mb-8">Mis Outfits</h1>
       {outfits.length === 0 ? (
         <div className="flex items-center justify-center">
@@ -133,7 +163,7 @@ export default function MyOutfitsPage() {
                   setSelectedOutfit(outfit);
                   setEditingOutfitName(outfit.name);
                 }}
-                className="mt-auto px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600 transition flex items-center gap-2"
+                className="mt-auto px-4 py-2 bg-cyan-500 text-white rounded-full w-fit hover:bg-cyan-600 transition flex items-center gap-2"
               >
                 <FaEdit /> Ver Detalles
               </button>
@@ -143,7 +173,7 @@ export default function MyOutfitsPage() {
       )}
 
       {selectedOutfit && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
           <div className="bg-gray-50 rounded-lg shadow-xl p-6 w-11/12 md:w-2/3 lg:w-1/2 relative">
             <button
               onClick={() => setSelectedOutfit(null)}
@@ -166,7 +196,7 @@ export default function MyOutfitsPage() {
             <div>
               <h3 className="text-xl font-base text-gray-800 mb-4">Prendas</h3>
               {selectedOutfit.clothes.map(clothe => (
-                <div key={clothe.id} className="flex items-center gap-4 mb-4 border-b pb-2">
+                <div key={clothe.id} className="flex items-center gap-4 mb-4 border-b pb-2 relative">
                   <div className="relative w-20 h-20 rounded overflow-hidden">
                     <Image
                       src={clothe.imageUrl}
@@ -174,6 +204,12 @@ export default function MyOutfitsPage() {
                       fill
                       className="object-cover"
                     />
+                    <button
+                      onClick={() => handleRemoveGarmentFromOutfit(clothe.id)}
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 hover:bg-red-700"
+                    >
+                      <FaTimes size={12} />
+                    </button>
                   </div>
                   <div>
                     <p className="text-lg font-semibold text-gray-800">{clothe.name}</p>
@@ -190,18 +226,34 @@ export default function MyOutfitsPage() {
               ))}
             </div>
             <div className="flex justify-end gap-4 mt-6">
+              <span className="mr-auto">
+              <button
+                onClick={() => setShowAddGarmentModal(true)}
+                className="mt-auto w-fit px-4 py-2 bg-[#00b289] text-white rounded-full hover:bg-[#24806c] transition flex items-center gap-2"
+              >
+                <FaPlus /> Añadir Prenda
+              </button> 
+              </span>
+              <span>
               <button
                 onClick={() => handleEditOutfit(selectedOutfit.id)}
-                className="flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded hover:bg-green-600 transition"
+                className="flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-full hover:bg-green-600 transition"
               >
-                <FaEdit /> Editar
+                <FaCheck /> Guardar
               </button>
+              </span>
+              <span>
               <button
-                onClick={() => handleDeleteOutfit(selectedOutfit.id)}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-red-500 transition"
+                onClick={() => {
+                  if (window.confirm("¿Estás seguro que deseas eliminar el outfit?")) {
+                    handleDeleteOutfit(selectedOutfit.id)}
+                  }
+                }
+                className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-full hover:bg-red-500 transition"
               >
                 <FaTrash /> Eliminar
               </button>
+              </span>
             </div>
           </div>
         </div>

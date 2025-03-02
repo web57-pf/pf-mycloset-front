@@ -87,7 +87,7 @@ export default function DropBox({ onDropItem, onCreateOutfit }: DropBoxProps) {
           <button
             onClick={handleSaveOutfit}
             disabled={droppedItems.length < 2}
-            className={`mt-4 w-fit px-3 py-1 rounded transition-colors ${
+            className={`mt-4 w-fit px-3 py-1 rounded-full transition-colors ${
               droppedItems.length < 2
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-cyan-500 text-white hover:bg-cyan-600"

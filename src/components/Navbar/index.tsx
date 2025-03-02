@@ -38,7 +38,10 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <FaUser className="text-xl text-gray-600 cursor-pointer hover:text-[#15803D]" />
+              <Link href="/mycloset/account">
+              <FaUser
+              className="text-xl text-gray-600 cursor-pointer hover:text-[#15803D]" />
+              </Link>
               <button
                 onClick={handleLogout}
                 className="text-sm text-black cursor-pointer hover:text-blue-500 transition-all duration-150"
