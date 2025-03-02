@@ -68,8 +68,7 @@ const Membership: React.FC = () => {
 
       const data = await response.json();
       if (response.ok) {
-        const initPoint = data.init_point;
-        window.location.href = initPoint;
+        window.location.href = data.init_point;
       } else {
         console.error('Error en la solicitud:', data);
       }
