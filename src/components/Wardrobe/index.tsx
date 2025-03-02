@@ -7,6 +7,7 @@ import FilterClothes from "../FilterClothes";
 
 export interface Garment {
   id: string;
+  name: string;
   imageUrl: string;
   tags: Tag[];
   category: Category;
@@ -14,12 +15,12 @@ export interface Garment {
 
 interface WardrobeProps {
   garments: Garment[];
-  onDeleteGarment: (id: string) => void;
+  onDeleteGarment?: (id: string) => void;
   onFilter: (categoryId: string, tagIds: string[]) => void;
   onClearFilter: () => void;
 }
 
-export default function Wardrobe({ garments, onDeleteGarment, onFilter, onClearFilter }: WardrobeProps) {
+export default function Wardrobe({ garments, onFilter, onClearFilter }: WardrobeProps) {
   const [showFilter, setShowFilter] = useState(false);
   return (
     <div className="p-4 max-w-6xl mx-auto">
@@ -75,13 +76,18 @@ export default function Wardrobe({ garments, onDeleteGarment, onFilter, onClearF
                       {tag.name}
                     </span>
                   ))}
+                  {(garment.name ?? "").length > 0 && (
+                    <span className="bg-gray-200 text-gray-800 text-xs px-2 py-1 rounded">
+                      {garment.name}
+                    </span>
+                  )}
                   </div>
-                  <button
+                  {/* <button
                     onClick={() => onDeleteGarment(garment.id)}
                     className="bg-red-500 text-white text-xs px-3 py-1 rounded hover:bg-red-600 transition"
                   >
                     Eliminar
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>
