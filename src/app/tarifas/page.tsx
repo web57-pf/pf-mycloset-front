@@ -5,7 +5,6 @@ import { useAuth } from "@/contexts/authContext"
 
 const Membership: React.FC = () => {
   const [hovered, setHovered] = useState([false, false, false]);
-  const [isAnnual, setIsAnnual] = useState(false);
   const { user } = useAuth(); // Usar el contexto para obtener el usuario
 
   const handleMouseEnter = (index: number) => {
@@ -18,10 +17,6 @@ const Membership: React.FC = () => {
     const newHovered = [...hovered];
     newHovered[index] = false;
     setHovered(newHovered);
-  };
-
-  const togglePricing = () => {
-    setIsAnnual(!isAnnual);
   };
 
   const pricing = {
@@ -49,6 +44,14 @@ const Membership: React.FC = () => {
       return;
     }
 
+    // Obtener el precio correspondiente según el tipo de plan
+    let planPrice = 0;
+    if (planType === 'premium') {
+      planPrice = pricing.premium.monthly;  // Solo tomamos el precio mensual por ahora
+    } else if (planType === 'pro') {
+      planPrice = pricing.pro.monthly;  // Solo tomamos el precio mensual por ahora
+    }
+
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/order`, {
         method: 'POST',
@@ -59,6 +62,7 @@ const Membership: React.FC = () => {
         body: JSON.stringify({
           userId: user.id,  // Usamos el user del contexto
           preferedSub: planType,
+          price: planPrice,  // Enviar el precio junto con el resto de los datos
         }),
       });
 
@@ -86,21 +90,6 @@ const Membership: React.FC = () => {
       <div className="text-center">
         <h1 className="text-4xl mb-12">Tarifas</h1>
 
-        <div className="love">
-          <input
-            id="switch"
-            type="checkbox"
-            checked={isAnnual}
-            onChange={togglePricing}
-          />
-          <label className="love-heart" htmlFor="switch">
-            <i className="left"></i>
-            <i className="right"></i>
-            <i className="bottom"></i>
-            <div className="round"></div>
-          </label>
-        </div>
-
         <div className="flex justify-start items-start flex-wrap -mx-2 mb-8">
           {/* Gratis Plan */}
           <div
@@ -111,7 +100,7 @@ const Membership: React.FC = () => {
             <h2 className="text-xl font-semibold mb-0">Gratis</h2>
             <p className="text-sm mt-0 mb-0">Perfecto para usuarios ocasionales o para aquellas personas que quieran conocer myCloset.</p>
             <p className="text-2xl font-bold mt-0 mb-0">
-              {pricing.free[isAnnual ? 'annual' : 'monthly']} <span className="text-base font-bold">$</span>
+              {pricing.free.monthly} <span className="text-base font-bold">$</span>
             </p>
             <button
               onClick={() => window.location.href = '/login'} 
@@ -171,7 +160,7 @@ const Membership: React.FC = () => {
             <h2 className="text-xl font-semibold mb-0">Premium</h2>
             <p className="text-sm mt-0 mb-0">Acceso completo a funcionalidades premium. Incluye soporte prioritario y contenido exclusivo.</p>
             <p className="text-2xl font-bold mt-0 mb-0">
-              {pricing.premium[isAnnual ? 'annual' : 'monthly']} <span className="text-base font-bold">$</span><span className="text-base font-bold">/ {isAnnual ? 'año' : 'mes'}</span>
+              {pricing.premium.monthly} <span className="text-base font-bold">$</span><span className="text-base font-bold">/ mes</span>
             </p>
             <button 
               onClick={() => handlePlanSelection('premium')}
@@ -231,7 +220,7 @@ const Membership: React.FC = () => {
             <h2 className="text-xl font-semibold mb-0">Pro</h2>
             <p className="text-sm mt-0 mb-0">Acceso completo a todo el contenido y soporte prioritario las 24 horas.</p>
             <p className="text-2xl font-bold mt-0 mb-0">
-              {pricing.pro[isAnnual ? 'annual' : 'monthly']} <span className="text-base font-bold">$</span>
+              {pricing.pro.monthly} <span className="text-base font-bold">$</span>
             </p>
             <button 
               onClick={() => handlePlanSelection('pro')}
@@ -276,7 +265,7 @@ const Membership: React.FC = () => {
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                   </svg>
-                  Atención al cliente personalizada.
+                  Acceso exclusivo a las actualizaciones de productos.
                 </li>
               </ul>
             </div>
