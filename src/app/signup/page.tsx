@@ -4,7 +4,6 @@ import { useState } from "react";
 import Swal from "sweetalert2";  
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { inherits } from "util";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -15,14 +14,7 @@ const Register = () => {
   const [isFocused, setIsFocused] = useState(false);  
   const router = useRouter(); 
 
-  interface PasswordValidationEvent extends React.ChangeEvent<HTMLInputElement> {}
-
-  interface PasswordValidationState {
-    isUpperCase: boolean;
-    isNumber: boolean;
-  }
-
-  const validatePassword = (e: PasswordValidationEvent): void => {
+  const validatePassword = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const passwordValue: string = e.target.value;
     setPassword(passwordValue);
 
@@ -50,7 +42,7 @@ const Register = () => {
       confirmButtonText: "¡Maravilloso!",
       timer: 2000,
       willClose: () => {
-      router.push("/login");  
+        router.push("/login");  
       }
     });
   };
@@ -73,17 +65,11 @@ const Register = () => {
     if (!isUpperCase || !isNumber) {
       showValidationAlert();
     } else {
-      const formData: RegisterFormData = {
-        name,
-        email,
-        password,
-      };
+      const formData: RegisterFormData = { name, email, password };
 
       const response = await fetch("http://localhost:3000/auth/signup", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
@@ -97,42 +83,31 @@ const Register = () => {
     }
   };
 
-  const handleBlur = () => {
-    setIsFocused(false);  
-  };
-
-  const handleFocus = () => {
-    setIsFocused(true);  
-  };
-
-  const handleLoginRedirect = () => {
-    router.push("/login");
-  };
+  const handleBlur = () => setIsFocused(false);
+  const handleFocus = () => setIsFocused(true);
+  const handleLoginRedirect = () => router.push("/login");
 
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: "inherit" }}>
-      <div
-        className="w-1/2">
-          <Image 
-            src="/signup.png"
-            alt="Fondo Login"  
-            className="object-center"
-            width={1000}
-            height={200}
-          />
-        </div>
+      <div className="w-1/2">
+        <Image 
+          src="/signup.png"
+          alt="Fondo Login"  
+          className="object-center"
+          width={1000}
+          height={200}
+        />
+      </div>
 
       <div className="flex justify-center items-center w-1/2">
         <div className="p-8 rounded-lg shadow-lg w-full max-w-md bg-gray-100">
-          <h1 className="text-2xl font-semibold text-center text-gray-700 mb-6 ">
+          <h1 className="text-2xl font-semibold text-center text-gray-700 mb-6">
             Formulario de Registro
           </h1>
 
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label htmlFor="name" className="block text-gray-600">
-                Nombre:
-              </label>
+              <label htmlFor="name" className="block text-gray-600">Nombre:</label>
               <input
                 type="text"
                 id="name"
@@ -144,9 +119,7 @@ const Register = () => {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="email" className="block text-gray-600">
-                Correo Electrónico:
-              </label>
+              <label htmlFor="email" className="block text-gray-600">Correo Electrónico:</label>
               <input
                 type="email"
                 id="email"
@@ -158,9 +131,7 @@ const Register = () => {
             </div>
 
             <div className="mb-6">
-              <label htmlFor="password" className="block text-gray-600">
-                Contraseña:
-              </label>
+              <label htmlFor="password" className="block text-gray-600">Contraseña:</label>
               <input
                 type="password"
                 id="password"
@@ -175,69 +146,11 @@ const Register = () => {
               {isFocused && (
                 <div className="mt-2 text-sm text-gray-600">
                   <ul className="list-disc pl-5 space-y-1">
-                    <li
-                      className={`flex items-center ${isUpperCase ? "text-green-500" : "text-red-500"}`}
-                    >
-                      {isUpperCase ? (
-                        <svg
-                          className="w-4 h-4 mr-2 text-green-500"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-11a1 1 0 011 1v4a1 1 0 01-1 1H6a1 1 0 01-1-1V8a1 1 0 011-1h3z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      ) : (
-                        <svg
-                          className="w-4 h-4 mr-2 text-red-500"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-11a1 1 0 011 1v4a1 1 0 01-1 1H6a1 1 0 01-1-1V8a1 1 0 011-1h3z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      )}
-                      Al menos una mayúscula.
+                    <li className={`flex items-center ${isUpperCase ? "text-green-500" : "text-red-500"}`}>
+                      {isUpperCase ? "✔" : "✖"} Al menos una mayúscula.
                     </li>
-                    <li
-                      className={`flex items-center ${isNumber ? "text-green-500" : "text-red-500"}`}
-                    >
-                      {isNumber ? (
-                        <svg
-                          className="w-4 h-4 mr-2 text-green-500"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-11a1 1 0 011 1v4a1 1 0 01-1 1H6a1 1 0 01-1-1V8a1 1 0 011-1h3z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      ) : (
-                        <svg
-                          className="w-4 h-4 mr-2 text-red-500"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-11a1 1 0 011 1v4a1 1 0 01-1 1H6a1 1 0 01-1-1V8a1 1 0 011-1h3z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      )}
-                      Al menos un número.
+                    <li className={`flex items-center ${isNumber ? "text-green-500" : "text-red-500"}`}>
+                      {isNumber ? "✔" : "✖"} Al menos un número.
                     </li>
                   </ul>
                 </div>
@@ -255,10 +168,7 @@ const Register = () => {
           <div className="mt-4 text-center">
             <p className="text-gray-600">
               ¿Tienes cuenta?{" "}
-              <button
-                onClick={handleLoginRedirect}
-                className="text-blue-500 hover:underline"
-              >
+              <button onClick={handleLoginRedirect} className="text-blue-500 hover:underline">
                 Inicia sesión
               </button>
             </p>
