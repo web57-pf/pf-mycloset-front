@@ -48,7 +48,7 @@ const Page = () => {
             <div className="w-1/3 px-4">
               <h2 className="text-2xl font-semibold mb-3 text-left">David</h2>
               <p className="text-lg leading-relaxed text-left mb-6">
-                Es un verdadero "picador de código", siempre trabajando con energía y dedicación. Se asegura de que cada línea de código esté bien escrita y optimizada. Su espíritu de colaboración y su preocupación por el bienestar del equipo lo hacen un compañero excepcional.
+                Es un verdadero picador de código, siempre trabajando con energía y dedicación. Se asegura de que cada línea de código esté bien escrita y optimizada. Su espíritu de colaboración y su preocupación por el bienestar del equipo lo hacen un compañero excepcional.
               </p>
             </div>
           </div>
