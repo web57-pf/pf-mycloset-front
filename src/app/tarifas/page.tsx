@@ -1,12 +1,17 @@
 'use client'
 
 import React, { useState } from 'react';
-//import '../../styles/styles.css'
+//import Styles from '@/components/Styles/styles.css'
 
 const Membership: React.FC = () => {
-
   const [hovered, setHovered] = useState([false, false, false]);
   const [isAnnual, setIsAnnual] = useState(false); 
+
+  
+  const user = {
+    userId: "12345", 
+    preferedSub: "",
+  };
 
   const handleMouseEnter = (index: number) => {
     const newHovered = [...hovered];
@@ -42,9 +47,32 @@ const Membership: React.FC = () => {
     }
   };
 
+  
+  const handlePlanSelection = async (planType: string) => {
+    user.preferedSub = planType; 
 
-  const redirectToMercadoPago = (url: string) => {
-    window.location.href = url;
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.userId,  
+          preferedSub: user.preferedSub, 
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        const initPoint = data.init_point;
+        window.location.href = initPoint; 
+      } else {
+        console.error("Error en la solicitud:", data);
+      }
+    } catch (error) {
+      console.error("Error en la solicitud:", error);
+    }
   };
 
   return (
@@ -53,22 +81,23 @@ const Membership: React.FC = () => {
         <h1 className="text-4xl mb-12">Tarifas</h1>
 
         <div className="love">
-            <input 
-              id="switch" 
-              type="checkbox" 
-              checked={isAnnual} 
-              onChange={togglePricing} 
-            />
-            <label className="love-heart" htmlFor="switch">
-              <i className="left"></i>
-              <i className="right"></i>
-              <i className="bottom"></i>
-              <div className="round"></div>
-            </label>
-          </div>
+          <input 
+            id="switch" 
+            type="checkbox" 
+            checked={isAnnual} 
+            onChange={togglePricing} 
+          />
+          <label className="love-heart" htmlFor="switch">
+            <i className="left"></i>
+            <i className="right"></i>
+            <i className="bottom"></i>
+            <div className="round"></div>
+          </label>
+        </div>
 
         <div className="flex justify-start items-start flex-wrap -mx-2 mb-8">
 
+          {/* Gratis Plan */}
           <div
             className="tarifa-card bg-white border-2 border-black rounded-lg w-64 h-[500px] p-3 text-left flex flex-col justify-between transition-all transform hover:translate-y-[-10px] hover:shadow-lg hover:shadow-blue-200/50 mx-2 hover:border-blue-200 hover:bg-blue-50 mb-6"
             onMouseEnter={() => handleMouseEnter(0)}  
@@ -82,8 +111,8 @@ const Membership: React.FC = () => {
             <button
               onClick={() => window.location.href = '/login'}  
               className="mt-4 w-full border-2 border-blue-500 bg-white text-blue-500 py-2 px-4 rounded-lg hover:bg-blue-500 hover:text-white"
-              >
-                ¡Crear cuenta!
+            >
+              ¡Crear cuenta!
             </button>
             <div className="border-t border-gray-300 my-0"></div> 
             <div className="text-left flex-grow-0 mt-2 pt-0">
@@ -128,7 +157,7 @@ const Membership: React.FC = () => {
             </div>
           </div>
 
-          {/* Premium */}
+          {/* Premium Plan */}
           <div
             className="tarifa-card bg-white border-2 border-black rounded-lg w-64 h-[500px] p-3 text-left flex flex-col justify-between transition-all transform hover:translate-y-[-10px] hover:shadow-lg hover:shadow-blue-200/50 mx-2 hover:border-blue-200 hover:bg-blue-50 mb-6"
             onMouseEnter={() => handleMouseEnter(1)}  
@@ -140,7 +169,7 @@ const Membership: React.FC = () => {
               {pricing.premium[isAnnual ? 'annual' : 'monthly']} <span className="text-base font-bold">$</span><span className="text-base font-bold">/ {isAnnual ? 'año' : 'mes'}</span> 
             </p>
             <button 
-              onClick={() => redirectToMercadoPago('https://www.mercadopago.com.ar/')}
+              onClick={() => handlePlanSelection('premium')}
               className="mt-4 w-full border-2 border-blue-500 bg-white text-blue-500 py-2 px-4 rounded-lg hover:bg-blue-500 hover:text-white"
             >
               Continuar
@@ -188,7 +217,7 @@ const Membership: React.FC = () => {
             </div>
           </div>
 
-          {/* Pro */}
+          {/* Pro Plan */}
           <div
             className="tarifa-card bg-white border-2 border-black rounded-lg w-64 h-[500px] p-3 text-left flex flex-col justify-between transition-all transform hover:translate-y-[-10px] hover:shadow-lg hover:shadow-blue-200/50 mx-2 hover:border-blue-200 hover:bg-blue-50 mb-6"
             onMouseEnter={() => handleMouseEnter(2)}  
@@ -200,7 +229,7 @@ const Membership: React.FC = () => {
               {pricing.pro[isAnnual ? 'annual' : 'monthly']} <span className="text-base font-bold">$</span><span className="text-base font-bold">/ {isAnnual ? 'año' : 'mes'}</span> 
             </p>
             <button 
-              onClick={() => redirectToMercadoPago('www.Google.es')}
+              onClick={() => handlePlanSelection('pro')}
               className="mt-4 w-full border-2 border-blue-500 bg-white text-blue-500 py-2 px-4 rounded-lg hover:bg-blue-500 hover:text-white"
             >
               Continuar
@@ -249,6 +278,7 @@ const Membership: React.FC = () => {
           </div>
         </div>
 
+        {/* Semanal Plan */}
         <div className="flex justify-between items-center w-full bg-white border-2 border-black rounded-lg p-4 mb-6 transition-all transform hover:translate-y-[-10px] hover:shadow-lg hover:shadow-blue-200/50">
           <div className="flex items-center justify-center w-1/4">
             <h2 className="text-xl font-semibold">Semanal</h2>
@@ -260,13 +290,12 @@ const Membership: React.FC = () => {
             <p className="text-sm mb-0">Acceso a funcionalidades premium por una semana. Ideal para quienes necesitan un acceso corto pero completo.</p>
           </div>
 
-          {/* Semanal */}
           <div className="flex items-center justify-end w-1/4 text-right">
             <p className="text-2xl font-bold mr-4">
               {pricing.weekly.weekly} <span className="text-base font-bold">$</span><span className="text-base font-bold">/semana</span>
             </p>
             <button 
-              onClick={() => redirectToMercadoPago('https://www.youtube.com/watch?v=UXbe-LU7C74')}
+              onClick={() => handlePlanSelection('weekly')}
               className="w-32 border-2 border-blue-500 bg-white text-blue-500 py-2 px-4 rounded-lg hover:bg-blue-500 hover:text-white"
             >
               Continuar
