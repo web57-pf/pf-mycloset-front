@@ -56,6 +56,7 @@ const Membership: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          credentials: "include",
         },
         body: JSON.stringify({
           userId: user.userId,  
