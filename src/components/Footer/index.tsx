@@ -11,7 +11,7 @@ export const Footer = () => {
             <Link href="/mycloset">
             <span className="text-sm text-gray-700 hover:text-blue-500">Mi Armario</span>
             </Link>
-            <Link href="/aboutus">
+            <Link href="/sobrenosotros">
             <span className="text-sm text-gray-700 hover:text-blue-500">Sobre Nosotros</span>
             </Link>
             <Link href="/contact">
