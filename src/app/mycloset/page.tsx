@@ -8,6 +8,7 @@ import axios from "axios";
 import { Tag } from "@/components/WDManager";
 import { useAuth } from "@/contexts/authContext";
 import { OutfitGarments } from "@/components/DropBox";
+import ProtectedRoute from "@/components/ProtectedRoute/protectedRoute";
 
 export interface Clothe {
   name: string;
@@ -132,6 +133,8 @@ export default function MyCloset() {
   };
 
   return (
+    <ProtectedRoute>
+
     <div className="relative flex flex-row w-full min-h-screen bg-background">
       {message && (
         <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded shadow-lg ${message.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
@@ -144,7 +147,7 @@ export default function MyCloset() {
           onDeleteGarment={handleDeleteGarment} 
           onFilter={handleFilter}
           onClearFilter={handleClearFilter} 
-        />
+          />
 
       </div>
 
@@ -154,8 +157,9 @@ export default function MyCloset() {
           newImage={newImage}
           onSaveGarment={handleSaveGarment}
           onCreateOutfit={handleCreateOutfit}
-        />
+          />
       </div>
     </div>
+          </ProtectedRoute>
   );
 }

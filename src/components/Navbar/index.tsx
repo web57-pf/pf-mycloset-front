@@ -21,7 +21,7 @@ const Navbar = () => {
           <Link href="https://www.facebook.com" target="_blank">
             <FaFacebook className="text-xl text-gray-600 cursor-pointer hover:text-blue-600" />
           </Link>
-          <Link href="https://wa.me/1234567890?text=Hola!%20Quisiera%20obtener%20más%20información." target="_blank">
+          <Link href="https://wa.me/1234567890?text=Hola!%20Quisiera%20obtener%20m%C3%A1s%20informaci%C3%B3n." target="_blank">
             <FaWhatsapp className="text-xl text-gray-600 cursor-pointer hover:text-green-500" />
           </Link>
         </div>
@@ -39,8 +39,7 @@ const Navbar = () => {
           ) : (
             <>
               <Link href="/mycloset/account">
-              <FaUser
-              className="text-xl text-gray-600 cursor-pointer hover:text-[#15803D]" />
+                <FaUser className="text-xl text-gray-600 cursor-pointer hover:text-[#15803D]" />
               </Link>
               <button
                 onClick={handleLogout}
@@ -62,7 +61,10 @@ const Navbar = () => {
           <Link href="/mycloset">
             <span className="text-sm text-gray-700 cursor-pointer hover:text-blue-500 transition-all duration-150">Mi Armario</span>
           </Link>
-          <Link href="/sobre-nosotros">
+          <Link href="/tarifas">
+            <span className="text-sm text-gray-700 cursor-pointer hover:text-blue-500 transition-all duration-150">Suscripciones</span>
+          </Link>
+          <Link href="/sobrenosotros">
             <span className="text-sm text-gray-700 cursor-pointer hover:text-blue-500 transition-all duration-150">Sobre Nosotros</span>
           </Link>
         </div>

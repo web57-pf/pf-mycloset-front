@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "@/contexts/authContext"
+import ProtectedRoute from '@/components/ProtectedRoute/protectedRoute';
 
 const Membership: React.FC = () => {
   const [hovered, setHovered] = useState([false, false, false]);
@@ -86,6 +87,8 @@ const Membership: React.FC = () => {
   }, [user]);
 
   return (
+    <ProtectedRoute>
+
     <div className="flex items-start justify-center p-0">
       <div className="text-center">
         <h1 className="text-4xl mb-12">Tarifas</h1>
@@ -96,7 +99,7 @@ const Membership: React.FC = () => {
             className="tarifa-card bg-white border-2 border-black rounded-lg w-64 h-[500px] p-3 text-left flex flex-col justify-between transition-all transform hover:translate-y-[-10px] hover:shadow-lg hover:shadow-blue-200/50 mx-2 hover:border-blue-200 hover:bg-blue-50 mb-6"
             onMouseEnter={() => handleMouseEnter(0)}
             onMouseLeave={() => handleMouseLeave(0)}
-          >
+            >
             <h2 className="text-xl font-semibold mb-0">Gratis</h2>
             <p className="text-sm mt-0 mb-0">Perfecto para usuarios ocasionales o para aquellas personas que quieran conocer myCloset.</p>
             <p className="text-2xl font-bold mt-0 mb-0">
@@ -105,7 +108,7 @@ const Membership: React.FC = () => {
             <button
               onClick={() => window.location.href = '/login'} 
               className="mt-4 w-full border-2 border-blue-500 bg-white text-blue-500 py-2 px-4 rounded-lg hover:bg-blue-500 hover:text-white"
-            >
+              >
               ¡Crear cuenta!
             </button>
             <div className="border-t border-gray-300 my-0"></div>
@@ -118,7 +121,7 @@ const Membership: React.FC = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                  >
+                    >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                   </svg>
                   Acceso limitado a funciones.
@@ -130,7 +133,7 @@ const Membership: React.FC = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                  >
+                    >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                   </svg>
                   No tendrás armario.
@@ -142,7 +145,7 @@ const Membership: React.FC = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                  >
+                    >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                   </svg>
                   ¡Ideal para probar la plataforma!
@@ -156,7 +159,7 @@ const Membership: React.FC = () => {
             className="tarifa-card bg-white border-2 border-black rounded-lg w-64 h-[500px] p-3 text-left flex flex-col justify-between transition-all transform hover:translate-y-[-10px] hover:shadow-lg hover:shadow-blue-200/50 mx-2 hover:border-blue-200 hover:bg-blue-50 mb-6"
             onMouseEnter={() => handleMouseEnter(1)}
             onMouseLeave={() => handleMouseLeave(1)}
-          >
+            >
             <h2 className="text-xl font-semibold mb-0">Premium</h2>
             <p className="text-sm mt-0 mb-0">Acceso completo a funcionalidades premium. Incluye soporte prioritario y contenido exclusivo.</p>
             <p className="text-2xl font-bold mt-0 mb-0">
@@ -165,7 +168,7 @@ const Membership: React.FC = () => {
             <button 
               onClick={() => handlePlanSelection('premium')}
               className="mt-4 w-full border-2 border-blue-500 bg-white text-blue-500 py-2 px-4 rounded-lg hover:bg-blue-500 hover:text-white"
-            >
+              >
               Continuar
             </button>
             <div className="border-t border-gray-300 my-0"></div>
@@ -178,7 +181,7 @@ const Membership: React.FC = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                  >
+                    >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                   </svg>
                   Acceso completo a la plataforma.
@@ -190,7 +193,7 @@ const Membership: React.FC = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                  >
+                    >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                   </svg>
                   Soporte prioritario.
@@ -202,7 +205,7 @@ const Membership: React.FC = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                  >
+                    >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                   </svg>
                   Contenido exclusivo y más.
@@ -216,7 +219,7 @@ const Membership: React.FC = () => {
             className="tarifa-card bg-white border-2 border-black rounded-lg w-64 h-[500px] p-3 text-left flex flex-col justify-between transition-all transform hover:translate-y-[-10px] hover:shadow-lg hover:shadow-blue-200/50 mx-2 hover:border-blue-200 hover:bg-blue-50 mb-6"
             onMouseEnter={() => handleMouseEnter(2)}
             onMouseLeave={() => handleMouseLeave(2)}
-          >
+            >
             <h2 className="text-xl font-semibold mb-0">Pro</h2>
             <p className="text-sm mt-0 mb-0">Acceso completo a todo el contenido y soporte prioritario las 24 horas.</p>
             <p className="text-2xl font-bold mt-0 mb-0">
@@ -225,7 +228,7 @@ const Membership: React.FC = () => {
             <button 
               onClick={() => handlePlanSelection('pro')}
               className="mt-4 w-full border-2 border-blue-500 bg-white text-blue-500 py-2 px-4 rounded-lg hover:bg-blue-500 hover:text-white"
-            >
+              >
               Continuar
             </button>
             <div className="border-t border-gray-300 my-0"></div>
@@ -238,7 +241,7 @@ const Membership: React.FC = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                  >
+                    >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                   </svg>
                   Acceso completo a todas las características.
@@ -250,7 +253,7 @@ const Membership: React.FC = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                  >
+                    >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                   </svg>
                   Soporte personalizado.
@@ -262,7 +265,7 @@ const Membership: React.FC = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                  >
+                    >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                   </svg>
                   Acceso exclusivo a las actualizaciones de productos.
@@ -273,6 +276,7 @@ const Membership: React.FC = () => {
         </div>
       </div>
     </div>
+                    </ProtectedRoute>
   );
 };
 
