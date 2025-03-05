@@ -1,28 +1,33 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/authContext";
 import Swal from "sweetalert2";
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
     const router = useRouter();
+    const [checked, setChecked] = useState(false);
 
     useEffect(() => {
-        if (user === null) {  
-            Swal.fire({
-                icon: "warning",
-                title: "Acceso restringido",
-                text: "Primero debes iniciar sesión para poder continuar",
-                confirmButtonText: "Aceptar",
-            }).then(() => {
-                router.push("/login");
-            });
+        if (!loading) {
+            if (user === null) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Acceso restringido",
+                    text: "Primero debes iniciar sesión para poder continuar",
+                    confirmButtonText: "Aceptar",
+                }).then(() => {
+                    router.push("/login");
+                });
+            } else {
+                setChecked(true);
+            }
         }
-    }, [user, router]);
+    }, [user, loading, router]);
 
-    if (user === null) return null; 
+    if (loading || !checked) return <p>Cargando...</p>; 
 
     return <>{children}</>;
 }
