@@ -64,7 +64,6 @@ function ProfilePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!profile) return;
-    // Si se desea cambiar la contraseña, se debe ingresar la contraseña actual
     if (newPassword && !currentPassword) {
       setError("Para cambiar la contraseña, ingresa tu contraseña actual.");
       setTimeout(() => setError(null), 3000);
@@ -115,7 +114,6 @@ function ProfilePage() {
   return (
     <div className="min-h-screen bg-background p-4 flex items-center justify-center">
       <div className="w-full max-w-3xl">
-        {/* Vista de visualización del perfil */}
         {!isEditing && (
           <div className="bg-white rounded-lg shadow-lg p-6">
             <div className="flex justify-between items-center mb-6">
@@ -141,7 +139,6 @@ function ProfilePage() {
           </div>
         )}
 
-        {/* Modal de edición */}
         {isEditing && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md transform transition-all">
