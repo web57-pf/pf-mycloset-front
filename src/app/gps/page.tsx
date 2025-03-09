@@ -60,6 +60,10 @@ const WeatherMap = () => {
     return null;
   };
 
+  if (typeof window === 'undefined') {
+    return <div>Loading...</div>;  // Puedes mostrar algo mientras se carga el componente en el servidor
+  }
+
   return (
     <div className="h-screen w-full">
       {position ? (
