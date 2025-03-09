@@ -14,9 +14,14 @@ interface WeatherData {
 const WeatherMap = () => {
   const [position, setPosition] = useState<[number, number] | null>(null);
   const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [isClient, setIsClient] = useState(false); 
 
   useEffect(() => {
-    if (navigator.geolocation) {
+    setIsClient(true); 
+  }, []);
+
+  useEffect(() => {
+    if (isClient && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         ({ coords }) => {
           const { latitude, longitude } = coords;
@@ -27,7 +32,7 @@ const WeatherMap = () => {
         { enableHighAccuracy: true }
       );
     }
-  }, []);
+  }, [isClient]); // Solo se ejecuta cuando es cliente
 
   const fetchWeather = async (lat: number, lon: number) => {
     try {
@@ -59,6 +64,10 @@ const WeatherMap = () => {
 
     return null;
   };
+
+  if (!isClient) {
+    return <div>Loading...</div>;  // Indicamos que cargue mientras está en el cliente
+  }
 
   return (
     <div className="h-screen w-full">
