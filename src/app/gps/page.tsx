@@ -1,4 +1,10 @@
-import WeatherMap from '@/components/WeatherMap/page';
+'use client';
+
+import dynamic from 'next/dynamic';
+
+const WeatherMap = dynamic(() => import('@/components/WeatherMap/page'), { 
+  ssr: false 
+});
 
 export default function GpsPage() {
   return (
