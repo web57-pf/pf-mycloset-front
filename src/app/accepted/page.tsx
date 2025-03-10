@@ -11,7 +11,7 @@ const Accepted = () => {
 
   useEffect(() => {
     const updateUserSession = async () => {
-      await refreshUser(); // Forzar la actualización de la sesión
+      await refreshUser(); 
     };
 
     updateUserSession().then(() => {
@@ -26,7 +26,6 @@ const Accepted = () => {
         willClose: () => router.push('/mycloset')
       });
 
-      // Asegurar que el usuario tenga tiempo de actualizarse antes de redirigir
       setTimeout(() => {
         router.push('/mycloset');
       }, 6000);

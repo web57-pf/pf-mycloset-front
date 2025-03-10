@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaInstagram, FaFacebook, FaWhatsapp, FaUser } from "react-icons/fa";
 import { useAuth } from "@/contexts/authContext";
-// import { RiAdminLine } from "react-icons/ri";
 
 const Navbar = () => {
   const { user, logout } = useAuth();

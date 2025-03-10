@@ -19,6 +19,7 @@ interface AuthContextType {
   user: User | null;
   setUser: (user: User | null) => void;
   logout: () => void;
+  refreshUser: () => Promise<void>;  
   loading: boolean;
 }
 
@@ -36,30 +37,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true); 
 
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session`, {
-          method: "POST",
-          credentials: "include",
-        });
 
-        if (response.ok) {
-          const userData = await response.json();
-          console.log("Usuario autenticado:", userData);
-          setUser(userData);
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
-        console.error("Error verificando la sesión", error);
-      } finally {
-        setLoading(false);
+  const checkSession = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session`, {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        console.log("Usuario autenticado:", userData);
+        setUser(userData);
+      } else {
+        setUser(null);
       }
-    };
+    } catch (error) {
+      console.error("Error verificando la sesión", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    checkSession();
+  useEffect(() => {
+    checkSession(); 
   }, []);
+
+  const refreshUser = async () => {
+    await checkSession(); 
+  };
 
   const logout = async () => {
     try {
@@ -80,7 +86,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, logout, loading }}>
+    <AuthContext.Provider value={{ user, setUser, logout, refreshUser, loading }}>
       {children}
     </AuthContext.Provider>
   );
