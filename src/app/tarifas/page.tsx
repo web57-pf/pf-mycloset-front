@@ -84,7 +84,7 @@ const Membership: React.FC = () => {
         <div className="flex items-center justify-center mb-8 space-x-8"> {/* space-x-8 para espaciar los elementos */}
           
           {/* Texto a la izquierda (Semanal) */}
-          <span className="text-lg sm:text-xl mr-3">Semanal</span>
+          <span className="text-lg sm:text-xl mr-3">Mensual</span>
   
           {/* Switch */}
           <div className="love">
