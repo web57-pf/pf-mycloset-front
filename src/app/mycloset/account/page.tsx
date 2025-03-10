@@ -12,6 +12,7 @@ interface UserProfile {
   password?: string;
   registeredAt?: string;
   isAdmin?: boolean;
+  subscriptionType?: string;
 }
 
 interface UpdatedProfile {
@@ -45,6 +46,7 @@ function ProfilePage() {
         }
         const data = await response.json();
         setProfile(data);
+        console.log(data)
       } catch (err) {
         console.error("Error al cargar perfil:", err);
         setError("No se pudo cargar el perfil.");
@@ -136,6 +138,12 @@ function ProfilePage() {
               <div>
                 <label className="block text-gray-700 font-medium">Email:</label>
                 <p className="mt-1 text-gray-600">{profile?.email}</p>
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium">Suscripcion:</label>
+                <p className="mt-1 text-gray-600">
+                  {profile?.subscriptionType}
+                </p>
               </div>
             </div>
           </div>
