@@ -5,6 +5,8 @@ import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { inherits } from "util";
+import axios from "axios";
+
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -61,11 +63,11 @@ const Register = () => {
     password: string;
   }
 
-  interface RegisterResponse {
-    id: string;
-    name: string;
-    email: string;
-  }
+  // interface RegisterResponse {
+  //   id: string;
+  //   name: string;
+  //   email: string;
+  // }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -75,18 +77,27 @@ const Register = () => {
     } else {
       const formData: RegisterFormData = { name, email, password };
 
-      const response = await fetch("http://localhost:3000/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      try {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/signup`, formData, {
+          headers: { "Content-Type": "application/json" },
+        });
 
-      if (response.ok) {
-        const data: RegisterResponse = await response.json();
-        console.log("Usuario registrado:", data);
-        showSuccessAlert();
-      } else {
-        console.error("Error en el registro");
+        if (response.status === 200) {
+          console.log("Usuario registrado:", response.data);
+          
+          
+          showSuccessAlert();
+
+        } else {
+          console.error("Error en el registro");
+        }
+      } catch (error) {
+        console.error("Error al registrar usuario:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error en el registro",
+          text: "Hubo un problema al registrar tu cuenta. Intenta nuevamente más tarde.",
+        });
       }
     }
   };

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react';
-//import Styles from '@/components/Styles/styles.css'
+import '../../components/Styles/styles.css';
 
 const Membership: React.FC = () => {
   const [hovered, setHovered] = useState([false, false, false]);
@@ -76,26 +76,37 @@ const Membership: React.FC = () => {
   };
 
   return (
-    <div className="flex items-start justify-center p-0">
+    <div className="flex items-center justify-center p-0">
       <div className="text-center">
         <h1 className="text-4xl mb-12">Tarifas</h1>
-
-        <div className="love">
-          <input 
-            id="switch" 
-            type="checkbox" 
-            checked={isAnnual} 
-            onChange={togglePricing} 
-          />
-          <label className="love-heart" htmlFor="switch">
-            <i className="left"></i>
-            <i className="right"></i>
-            <i className="bottom"></i>
-            <div className="round"></div>
-          </label>
+  
+        {/* Contenedor flex para alinear el texto y el switch */}
+        <div className="flex items-center justify-center mb-8 space-x-8"> {/* space-x-8 para espaciar los elementos */}
+          
+          {/* Texto a la izquierda (Semanal) */}
+          <span className="text-lg sm:text-xl mr-3">Semanal</span>
+  
+          {/* Switch */}
+          <div className="love">
+            <input 
+              id="switch" 
+              type="checkbox" 
+              checked={isAnnual} 
+              onChange={togglePricing} 
+            />
+            <label className="love-heart" htmlFor="switch">
+              <i className="left"></i>
+              <i className="right"></i>
+              <i className="bottom"></i>
+              <div className="round"></div>
+            </label>
+          </div>
+  
+          {/* Texto a la derecha (Anual) */}
+          <span className="text-lg sm:text-xl">Anual</span>
         </div>
 
-        <div className="flex justify-start items-start flex-wrap -mx-2 mb-8">
+        <div className="flex justify-center items-start flex-wrap -mx-2 mb-8">
 
           {/* Gratis Plan */}
           <div
@@ -139,7 +150,7 @@ const Membership: React.FC = () => {
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                   </svg>
-                  No tendrás armario.
+                  Podrás guardar prendas, pero no crear outfits.
                 </li>
                 <li className="flex items-center">
                   <svg
@@ -199,7 +210,7 @@ const Membership: React.FC = () => {
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                   </svg>
-                  Soporte prioritario.
+                  Capacidad de 10 outfits mensuales.
                 </li>
                 <li className="flex items-center">
                   <svg
@@ -211,7 +222,7 @@ const Membership: React.FC = () => {
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                   </svg>
-                  Contenido exclusivo y más.
+                  ¡Contenido exclusivo y más!
                 </li>
               </ul>
             </div>
@@ -247,39 +258,39 @@ const Membership: React.FC = () => {
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                   </svg>
-                  Acceso a todas las características premium.
-                </li>
-                <li className="flex items-center">
-                  <svg
-                    className={`w-4 h-4 ${hovered[2] ? 'text-blue-500' : 'text-gray-500'} mr-2`} 
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  Soporte las 24 horas.
-                </li>
-                <li className="flex items-center">
-                  <svg
-                    className={`w-4 h-4 ${hovered[2] ? 'text-blue-500' : 'text-gray-500'} mr-2`} 
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
                   Contenido exclusivo ilimitado.
+                </li>
+                <li className="flex items-center">
+                  <svg
+                    className={`w-4 h-4 ${hovered[2] ? 'text-blue-500' : 'text-gray-500'} mr-2`} 
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  Funcionalidad de clima añadida.
+                </li>
+                <li className="flex items-center">
+                  <svg
+                    className={`w-4 h-4 ${hovered[2] ? 'text-blue-500' : 'text-gray-500'} mr-2`} 
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  ¡Sin límite ninguno!
                 </li>
               </ul>
             </div>
           </div>
-        </div>
+        </div>  
 
         {/* Semanal Plan */}
-        <div className="flex justify-between items-center w-full bg-white border-2 border-black rounded-lg p-4 mb-6 transition-all transform hover:translate-y-[-10px] hover:shadow-lg hover:shadow-blue-200/50">
+        <div className="flex justify-between items-center w-full max-w-4xl mx-auto bg-white border-2 border-black rounded-lg p-4 mb-6 transition-all transform hover:translate-y-[-10px] hover:shadow-lg hover:shadow-blue-200/50">
           <div className="flex items-center justify-center w-1/4">
             <h2 className="text-xl font-semibold">Semanal</h2>
           </div>
