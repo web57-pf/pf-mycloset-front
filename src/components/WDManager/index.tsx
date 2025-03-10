@@ -6,6 +6,7 @@ import axios from "axios";
 import UploadWidget from "../UploadComponent";
 import DropBox, { OutfitGarments } from "../DropBox";
 import fetchCategories from "@/helpers/categories";
+import { UserProfile } from "@/app/mycloset/account/page";
 
 export interface Tag {
   id: string;
@@ -24,9 +25,11 @@ interface GarmentManagerProps {
   onSaveGarment: (garment: Garment) => void;
   onUploadSuccess: (image: CloudinaryImage) => void;
   onCreateOutfit: (outfit: OutfitGarments) => void;
+  profileInfo: UserProfile | null;
+  outfitsLength: number;
 }
 
-export default function GarmentManager({ newImage, onSaveGarment, onUploadSuccess, onCreateOutfit }: GarmentManagerProps) {
+export default function GarmentManager({ newImage, onSaveGarment, onUploadSuccess, onCreateOutfit, profileInfo, outfitsLength }: GarmentManagerProps) {
   const [pendingImage, setPendingImage] = useState<CloudinaryImage | null>(null);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [availableTags, setAvailableTags] = useState<Tag[]>([]);
@@ -171,7 +174,7 @@ export default function GarmentManager({ newImage, onSaveGarment, onUploadSucces
         </div>
       ) : (
         <div className="flex flex-col items-center w-full">
-          <DropBox onDropItem={handleDropItem} onCreateOutfit={onCreateOutfit} />
+          <DropBox onDropItem={handleDropItem} onCreateOutfit={onCreateOutfit} profileInfo={profileInfo} outfitsLength={outfitsLength} />
           <div className="flex justify-end p-8 w-full">
           <UploadWidget onUploadSuccess={onUploadSuccess} />
           </div>
