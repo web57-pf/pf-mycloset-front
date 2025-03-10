@@ -1,18 +1,61 @@
 'use client';
+import { UserProfile } from "@/app/mycloset/account/page";
 import { OutfitGarments } from "../DropBox";
 import { useState } from "react";
+import Swal from 'sweetalert2';
+import { useRouter } from 'next/navigation';
 
 interface OutfitCreationWindowProps {
   onClose: () => void;
   onCreateOutfit: (outfit: OutfitGarments) => void;
+  profileInfo: UserProfile | null;
+  outfitsLength: number;
 }
 
-export default function OutfitCreationWindow({ onClose, onCreateOutfit }: OutfitCreationWindowProps) {
+export default function OutfitCreationWindow({ onClose, onCreateOutfit, profileInfo, outfitsLength }: OutfitCreationWindowProps) {
     const [name, setName] = useState<string>("");
+    const router = useRouter();
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!name) return;
+        
+        if (profileInfo?.subscriptionType === "free") {
+            const result = await Swal.fire({
+                title: '¡Suscripción requerida!',
+                text: 'Necesitas una suscripción Premium o Pro para guardar outfits',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ver suscripciones',
+                cancelButtonText: 'Cancelar'
+            });
+
+            if (result.isConfirmed) {
+                router.push('/tarifas');
+            }
+            return;
+        }
+
+        if (outfitsLength >= 5 && profileInfo?.subscriptionType === "premium") {
+            const result = await Swal.fire({
+                title: '¡Suscripción PRO requerida!',
+                text: 'No puedes guardar más de 5 outfits con una suscripción Premium',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ver suscripciones',
+                cancelButtonText: 'Cancelar'
+            });
+
+            if (result.isConfirmed) {
+                router.push('/tarifas');
+            }
+            return;
+        }
+
         onCreateOutfit({ name, garmentIds: [] });
     }
 

@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaInstagram, FaFacebook, FaWhatsapp, FaUser } from "react-icons/fa";
 import { useAuth } from "@/contexts/authContext";
+import { RiAdminLine } from "react-icons/ri";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -44,9 +45,18 @@ const Navbar = () => {
               <button
                 onClick={handleLogout}
                 className="text-sm text-black cursor-pointer hover:text-blue-500 transition-all duration-150"
-              >
+                >
                 Cerrar sesión
               </button>
+                {user.isAdmin ? (
+                  <Link href="/admin-dashboard">
+                    <p className="text-base text-gray-600 cursor-pointer hover:text-[#15803D]">
+                      Panel de Administración
+                    </p>
+                  </Link>
+                ) : (
+                  null
+                )}
             </>
           )}
         </div>

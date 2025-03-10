@@ -9,6 +9,7 @@ import { Tag } from "@/components/WDManager";
 import { useAuth } from "@/contexts/authContext";
 import { OutfitGarments } from "@/components/DropBox";
 import ProtectedRoute from "@/components/ProtectedRoute/protectedRoute";
+import getUserOutfits from "@/helpers/getUserOutfits";
 
 export interface Clothe {
   name: string;
@@ -25,6 +26,7 @@ export default function MyCloset() {
   const [savedGarments, setSavedGarments] = useState<Garment[]>([]);
   const [allGarments, setAllGarments] = useState<Garment[]>([]);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [outfitsLength, setOutfitsLength] = useState(0);
 
   const { user } = useAuth();
 
@@ -44,6 +46,18 @@ export default function MyCloset() {
 
     fetchGarments();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      getUserOutfits()
+        .then((response) => {
+          setOutfitsLength(response.length);  
+        })
+        .catch((error) => {
+          console.error("Error obteniendo los outfits:", error);
+        });
+    }
+  }, [user]);
 
   const handleUploadSuccess = (image: CloudinaryImage) => {
     setNewImage(image);
@@ -157,6 +171,7 @@ export default function MyCloset() {
           newImage={newImage}
           onSaveGarment={handleSaveGarment}
           onCreateOutfit={handleCreateOutfit}
+          outfitsLength={outfitsLength}
           />
       </div>
     </div>

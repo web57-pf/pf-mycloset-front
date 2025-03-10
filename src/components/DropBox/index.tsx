@@ -3,10 +3,13 @@ import { useState } from "react";
 import Image from "next/image";
 import { Garment } from "../Wardrobe";
 import OutfitCreationWindow from "../OutfitCreationWindow";
+import { UserProfile } from "@/app/mycloset/account/page";
 
 interface DropBoxProps {
   onDropItem?: (item: Garment) => void;
   onCreateOutfit: (outfit: OutfitGarments) => void;
+  profileInfo: UserProfile | null;
+  outfitsLength: number;
 }
 
 export interface OutfitGarments {
@@ -14,7 +17,7 @@ export interface OutfitGarments {
   garmentIds: string[];
 }
 
-export default function DropBox({ onDropItem, onCreateOutfit }: DropBoxProps) {
+export default function DropBox({ onDropItem, onCreateOutfit, profileInfo, outfitsLength }: DropBoxProps) {
   const [droppedItems, setDroppedItems] = useState<Garment[]>([]);
   const [outfitCreationWindow, setOutfitCreationWindow] = useState(false);
 
@@ -98,6 +101,8 @@ export default function DropBox({ onDropItem, onCreateOutfit }: DropBoxProps) {
         </>
       ) : (
         <OutfitCreationWindow
+          profileInfo={profileInfo}
+          outfitsLength={outfitsLength}
           onClose={() => setOutfitCreationWindow(false)}
           onCreateOutfit={(outfit: OutfitGarments) => {
             const outfitWithGarments = {

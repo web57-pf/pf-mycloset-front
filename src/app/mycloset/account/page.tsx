@@ -5,13 +5,14 @@ import axios from "axios";
 import { FaSave, FaEdit, FaTimes } from "react-icons/fa";
 import { useAuth } from "@/contexts/authContext";
 
-interface UserProfile {
+export interface UserProfile {
   id: string;
   name: string;
   email: string;
   password?: string;
   registeredAt?: string;
   isAdmin?: boolean;
+  subscriptionType?: string;
 }
 
 interface UpdatedProfile {
@@ -19,6 +20,7 @@ interface UpdatedProfile {
   email: string;
   currentPassword?: string;
   password?: string;
+  subscriptionType?: string;
 }
 
 function ProfilePage() {
@@ -55,7 +57,7 @@ function ProfilePage() {
     fetchProfile();
   }, [user]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     if (profile) {
       setProfile({ ...profile, [e.target.name]: e.target.value });
     }
@@ -64,11 +66,18 @@ function ProfilePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!profile) return;
+
+    // Check password requirements first
     if (newPassword && !currentPassword) {
       setError("Para cambiar la contraseña, ingresa tu contraseña actual.");
       setTimeout(() => setError(null), 3000);
       return;
     }
+
+    // Show confirmation dialog
+    const confirmed = window.confirm("¿Estás seguro/a que deseas actualizar tu perfil?");
+    if (!confirmed) return;
+
     try {
       const payload: UpdatedProfile = {
         name: profile.name,
@@ -135,6 +144,14 @@ function ProfilePage() {
                 <label className="block text-gray-700 font-medium">Email:</label>
                 <p className="mt-1 text-gray-600">{profile?.email}</p>
               </div>
+              <div>
+                <label className="block text-gray-700 font-medium">Suscripción:</label>
+                <p className="mt-1 text-gray-600">{profile?.subscriptionType}</p>
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium">Fecha de registro:</label>
+                <p className="mt-1 text-gray-600">{(profile?.registeredAt) ? new Date(profile?.registeredAt).toLocaleDateString() : ''}</p>
+              </div>
             </div>
           </div>
         )}
@@ -172,6 +189,19 @@ function ProfilePage() {
                     onChange={handleChange}
                     className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                   />
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-1">Sucripción:</label>
+                    <select
+                    name="subscriptionType"
+                    value={profile?.subscriptionType || ""}
+                    onChange={handleChange}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    >
+                    <option value="free">Free</option>
+                    <option value="premium">Premium</option>
+                    <option value="pro">Pro</option>
+                    </select>
                 </div>
                 <div>
                   <label className="block text-gray-700 mb-1">Contraseña actual:</label>

@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from "react";
-import { Doughnut, Line, Bar } from "react-chartjs-2";
+import { Doughnut, Line, Bar, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -22,6 +22,8 @@ import {
   getMonthlyRegistrations,
   getMonthlySubscriptions
 } from "@/helpers/getMetrics";
+import Swal from 'sweetalert2';
+import axios from 'axios';
 
 ChartJS.register(
   ArcElement,
@@ -47,13 +49,22 @@ interface Order {
 
 interface RegistrationMetric {
   month: string;
-  count: string; // se recibirá como string, se convertirá a número
+  count: string;
 }
 
 interface SubscriptionMetric {
   month: string;
   subscriptionType: string;
   count: string;
+}
+
+interface DetailedUser {
+  id: string;
+  name: string;
+  email: string;
+  subscriptionType: string;
+  registeredAt: string;
+  isBanned?: boolean;
 }
 
 export const AdminDashboard = () => {
@@ -65,6 +76,8 @@ export const AdminDashboard = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [monthlyRegistrations, setMonthlyRegistrations] = useState<RegistrationMetric[]>([]);
   const [monthlySubscriptions, setMonthlySubscriptions] = useState<SubscriptionMetric[]>([]);
+  const [showUsersModal, setShowUsersModal] = useState(false);
+  const [detailedUsers, setDetailedUsers] = useState<DetailedUser[]>([]);
 
   useEffect(() => {
     getUsersCount().then((response) => {
@@ -91,18 +104,68 @@ export const AdminDashboard = () => {
     });
   }, []);
 
-  // Datos globales de suscripciones actuales
+  const handleShowUsers = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/total`, {
+        credentials: 'include'
+      });
+      const data = await response.json();
+      setDetailedUsers(data);
+      setShowUsersModal(true);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
+  const handleBanUser = async (userId: string) => {
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: "¿Deseas banear a este usuario?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, banear',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/${userId}`, {
+          withCredentials: true
+        });
+        
+        // Refresh users list
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, {
+          credentials: 'include'
+        });
+        const data = await response.json();
+        setDetailedUsers(data);
+
+        Swal.fire(
+          '¡Usuario baneado!',
+          'El usuario ha sido baneado exitosamente.',
+          'success'
+        );
+      } catch (error) {
+        Swal.fire(
+          'Error',
+          'No se pudo banear al usuario.',
+          'error'
+        );
+      }
+    }
+  };
+
   const subscriptionData: Subscription[] = [
     { type: "Gratis", count: freeUsers.length },
     { type: "Premium", count: premiumUsers.length },
     { type: "Pro", count: proUsers.length },
   ];
 
-  // Datos para el gráfico de usuarios registrados por mes
   const registrationLabels = monthlyRegistrations.map(item => item.month);
   const registrationCounts = monthlyRegistrations.map(item => Number(item.count));
 
-  // Pivotear los datos de variación de suscripciones: { month: { free, premium, pro } }
   const subscriptionPivot: { [month: string]: { free: number; premium: number; pro: number } } = {};
   monthlySubscriptions.forEach(item => {
     const month = item.month;
@@ -124,7 +187,6 @@ export const AdminDashboard = () => {
   const premiumSubData = subscriptionLabels.map(month => subscriptionPivot[month].premium);
   const proSubData = subscriptionLabels.map(month => subscriptionPivot[month].pro);
 
-  // Procesar las órdenes para las ventas mensuales (se usa el mismo label que en las registraciones si están disponibles)
   const salesLabels = registrationLabels.length > 0 ? registrationLabels : ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"];
   const monthlySales = orders.reduce((acc: { [key: string]: number }, order) => {
     const [year, month] = order.date.split('-');
@@ -134,7 +196,6 @@ export const AdminDashboard = () => {
   }, {});
   const salesData = salesLabels.map(label => monthlySales[label] || 0);
 
-  // Gráfico de pastel con suscripciones totales
   const doughnutData = {
     labels: subscriptionData.map((sub) => sub.type),
     datasets: [
@@ -148,7 +209,6 @@ export const AdminDashboard = () => {
     ],
   };
 
-  // Gráfico de barras para usuarios registrados por mes
   const registrationBarData = {
     labels: registrationLabels,
     datasets: [
@@ -162,7 +222,6 @@ export const AdminDashboard = () => {
     ],
   };
 
-  // Gráfico de líneas para variación mensual de suscripciones (tres líneas: free, premium, pro)
   const subscriptionLineData = {
     labels: subscriptionLabels,
     datasets: [
@@ -193,7 +252,6 @@ export const AdminDashboard = () => {
     ],
   };
 
-  // Gráfico de líneas para ventas mensuales
   const lineSalesData = {
     labels: salesLabels,
     datasets: [
@@ -223,7 +281,10 @@ export const AdminDashboard = () => {
         Panel de Administración
       </h1>
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2">
-        <div className="bg-gray-50 opacity-90 p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-2xl">
+        <div 
+          className="bg-gray-50 opacity-90 p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-2xl cursor-pointer"
+          onClick={handleShowUsers}
+        >
           <h2 className="text-xl font-semibold mb-4 text-gray-800 tracking-wide">
             Usuarios Registrados Totales
           </h2>
@@ -271,7 +332,6 @@ export const AdminDashboard = () => {
           Visualización de Datos
         </h2>
         <div className="grid gap-8 md:grid-cols-2">
-          {/* Gráfico de usuarios registrados mensualmente */}
           <div className="bg-gray-50 opacity-90 p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-2xl">
             <h3 className="text-xl font-semibold text-gray-800 tracking-wide mb-4">
               Registros Mensuales
@@ -280,7 +340,6 @@ export const AdminDashboard = () => {
               <Bar data={registrationBarData} options={chartOptions} />
             </div>
           </div>
-          {/* Gráfico de variación mensual de suscripciones */}
           <div className="bg-gray-50 opacity-90 p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-2xl">
             <h3 className="text-xl font-semibold text-gray-800 tracking-wide mb-4">
               Variación Mensual de Suscripciones
@@ -289,7 +348,14 @@ export const AdminDashboard = () => {
               <Line data={subscriptionLineData} options={chartOptions} />
             </div>
           </div>
-          {/* Gráfico de ganancias mensuales */}
+          <div className="bg-gray-50 opacity-90 p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-2xl">
+            <h3 className="text-xl font-semibold text-gray-800 tracking-wide mb-4">
+              Distribución de Suscripciones
+            </h3>
+            <div className="h-64">
+              <Pie data={doughnutData} options={chartOptions} />
+            </div>
+          </div>
           <div className="bg-gray-50 opacity-90 p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-2xl">
             <h3 className="text-xl font-semibold text-gray-800 tracking-wide mb-4">
               Ganancias Mensuales
@@ -301,11 +367,74 @@ export const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* <div className="mt-10 flex justify-center">
-        <button className="px-6 py-2 bg-cyan-500 text-white rounded-lg shadow-lg hover:bg-cyan-600 transition-all duration-300">
-          Actualizar Datos
-        </button>
-      </div> */}
+      {showUsersModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[80vh] overflow-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-semibold">Lista de Usuarios Registrados</h2>
+              <button
+                onClick={() => setShowUsersModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Nombre
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Suscripción
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Fecha de Registro
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Acciones
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {detailedUsers.map((user) => (
+                    <tr key={user.id}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {user.name}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {user.email}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {user.subscriptionType}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {new Date(user.registeredAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <button
+                          onClick={() => handleBanUser(user.id)}
+                          className="text-red-600 hover:text-red-900"
+                          disabled={user.isBanned}
+                        >
+                          {user.isBanned ? 'Usuario Baneado' : 'Banear Usuario'}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

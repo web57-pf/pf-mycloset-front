@@ -1,9 +1,18 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
 
+interface subsType {
+  free: string;
+  premium: string;
+  pro: string;
+}
+
 interface User {
   id: string;
+  name: string;
   email: string;
+  isAdmin: boolean;
+  subscriptionType: subsType;
 }
 
 interface AuthContextType {
