@@ -1,17 +1,25 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
 
+interface subsType {
+  free: string;
+  premium: string;
+  pro: string;
+}
+
 interface User {
   id: string;
+  name: string;
   email: string;
-  subscription?: string; // Agrega el campo de suscripción si lo necesitas
+  isAdmin: boolean;
+  subscriptionType: subsType;
 }
 
 interface AuthContextType {
   user: User | null;
   setUser: (user: User | null) => void;
   logout: () => void;
-  refreshUser: () => Promise<void>; // Nueva función para refrescar el usuario
+  refreshUser: () => Promise<void>;  
   loading: boolean;
 }
 
@@ -27,14 +35,14 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); 
 
-  const fetchUserSession = async () => {
+
+  const checkSession = async () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session`, {
         method: "POST",
         credentials: "include",
-        cache: "no-store",
       });
 
       if (response.ok) {
@@ -52,11 +60,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    fetchUserSession();
+    checkSession(); 
   }, []);
 
   const refreshUser = async () => {
-    await fetchUserSession(); // Llama a la misma función para actualizar el estado del usuario
+    await checkSession(); 
   };
 
   const logout = async () => {
