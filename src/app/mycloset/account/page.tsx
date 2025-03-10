@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { FaSave, FaEdit, FaTimes } from "react-icons/fa";
 import { useAuth } from "@/contexts/authContext";
+import ProtectedRoute from "@/components/ProtectedRoute/protectedRoute";
 
 export interface UserProfile {
   id: string;
@@ -121,6 +122,8 @@ function ProfilePage() {
   }
 
   return (
+    <ProtectedRoute>
+
     <div className="min-h-screen bg-background p-4 flex items-center justify-center">
       <div className="w-full max-w-3xl">
         {!isEditing && (
@@ -130,7 +133,7 @@ function ProfilePage() {
               <button
                 onClick={() => setIsEditing(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600 transition"
-              >
+                >
                 <FaEdit /> Editar
               </button>
             </div>
@@ -164,7 +167,7 @@ function ProfilePage() {
                 <button
                   onClick={() => setIsEditing(false)}
                   className="text-gray-600 hover:text-gray-800"
-                >
+                  >
                   <FaTimes size={24} />
                 </button>
               </div>
@@ -178,7 +181,7 @@ function ProfilePage() {
                     value={profile?.name || ""}
                     onChange={handleChange}
                     className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                  />
+                    />
                 </div>
                 <div>
                   <label className="block text-gray-700 mb-1">Email:</label>
@@ -188,7 +191,7 @@ function ProfilePage() {
                     value={profile?.email || ""}
                     onChange={handleChange}
                     className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                  />
+                    />
                 </div>
                 <div>
                   <label className="block text-gray-700 mb-1">Sucripción:</label>
@@ -212,7 +215,7 @@ function ProfilePage() {
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     placeholder="Ingresa tu contraseña actual"
                     className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                  />
+                    />
                 </div>
                 <div>
                   <label className="block text-gray-700 mb-1">Nueva contraseña:</label>
@@ -223,13 +226,13 @@ function ProfilePage() {
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Ingresa tu nueva contraseña"
                     className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                  />
+                    />
                 </div>
                 <div className="flex justify-end gap-4 mt-4">
                   <button
                     type="submit"
                     className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
-                  >
+                    >
                     <FaSave /> Guardar cambios
                   </button>
                 </div>
@@ -239,6 +242,7 @@ function ProfilePage() {
         )}
       </div>
     </div>
+        </ProtectedRoute>
   );
 }
 

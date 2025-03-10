@@ -5,6 +5,7 @@ import axios from "axios";
 import Image from "next/image";
 import { FaEdit, FaTrash, FaTimes } from "react-icons/fa";
 import fetchCategories from "@/helpers/categories";
+import ProtectedRoute from "@/components/ProtectedRoute/protectedRoute";
 
 interface Tag {
   id: string;
@@ -107,6 +108,8 @@ export default function AllClothesPage() {
   };
 
   return (
+    <ProtectedRoute>
+
     <div className="min-h-screen bg-background p-4">
       <h1 className="text-4xl font-light text-center text-gray-800 mb-8">
         Todas las Prendas
@@ -121,7 +124,7 @@ export default function AllClothesPage() {
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
-        >
+          >
           <option value="">Todas las categorías</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.id}>
@@ -131,8 +134,8 @@ export default function AllClothesPage() {
         </select>
         {selectedCategory && (
           <button
-            onClick={() => setSelectedCategory("")}
-            className="mt-2 text-sm text-cyan-600 underline hover:text-cyan-800"
+          onClick={() => setSelectedCategory("")}
+          className="mt-2 text-sm text-cyan-600 underline hover:text-cyan-800"
           >
             Limpiar filtro
           </button>
@@ -155,8 +158,8 @@ export default function AllClothesPage() {
         <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {clothes.map((clothe) => (
             <div
-              key={clothe.id}
-              className="bg-white rounded-lg shadow-lg p-4 flex flex-col"
+            key={clothe.id}
+            className="bg-white rounded-lg shadow-lg p-4 flex flex-col"
             >
               <div className="relative w-full h-56 rounded overflow-hidden mb-4">
                 <Image
@@ -164,7 +167,7 @@ export default function AllClothesPage() {
                   alt={clothe.name}
                   fill
                   className="object-cover"
-                />
+                  />
               </div>
               <h2 className="text-2xl font-light text-gray-800 mb-2">
                 {clothe.name}
@@ -175,8 +178,8 @@ export default function AllClothesPage() {
               <div className="flex flex-wrap gap-2 mb-4">
                 {clothe.tags?.map((tag) => (
                   <span
-                    key={tag.id}
-                    className="px-2 py-1 bg-gray-200 rounded-full text-xs text-gray-700"
+                  key={tag.id}
+                  className="px-2 py-1 bg-gray-200 rounded-full text-xs text-gray-700"
                   >
                     {tag.name}
                   </span>
@@ -189,7 +192,7 @@ export default function AllClothesPage() {
                   setEditName(clothe.name);
                 }}
                 className="mt-auto px-4 py-2 w-fit bg-cyan-500 text-white rounded-full hover:bg-cyan-600 transition flex items-center gap-2"
-              >
+                >
                 <FaEdit /> Editar
               </button>
             </div>
@@ -204,7 +207,7 @@ export default function AllClothesPage() {
             <button
               onClick={() => setSelectedClothe(null)}
               className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-            >
+              >
               <FaTimes size={20} />
             </button>
             <h2 className="text-3xl font-light mb-4">Editar Prenda</h2>
@@ -217,13 +220,13 @@ export default function AllClothesPage() {
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-              />
+                />
             </div>
             <div className="flex justify-end gap-4 mt-6">
               <button
                 onClick={() => handleUpdateClothe(selectedClothe.id)}
                 className="flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-full hover:bg-green-500 transition"
-              >
+                >
                 <FaEdit /> Guardar Cambios
               </button>
               <button
@@ -233,7 +236,7 @@ export default function AllClothesPage() {
                 }
               }}
               className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-full hover:bg-red-500 transition"
-            >
+              >
               <FaTrash /> Eliminar Prenda
             </button>            
             </div>
@@ -241,5 +244,6 @@ export default function AllClothesPage() {
         </div>
       )}
     </div>
+      </ProtectedRoute>
   );
 }

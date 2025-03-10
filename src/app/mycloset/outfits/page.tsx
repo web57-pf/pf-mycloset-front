@@ -4,6 +4,7 @@ import axios from 'axios';
 import Image from 'next/image';
 import { FaEdit, FaTrash, FaTimes, FaCheck, FaPlus } from 'react-icons/fa';
 import AddGarmentModal from '@/components/AddGarmentModal';
+import ProtectedRoute from '@/components/ProtectedRoute/protectedRoute';
 
 interface Tag {
   id: string;
@@ -113,13 +114,16 @@ export default function MyOutfitsPage() {
 
   if (error) {
     return (
+      <ProtectedRoute>
       <div className="flex items-center justify-center min-h-screen bg-background">
         <p className="text-xl text-red-500">{error}</p>
       </div>
+      </ProtectedRoute>
     );
   }
 
   return (
+    <ProtectedRoute>
     <div className="min-h-screen bg-background p-4 relative">
       {showAddGarmentModal && 
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -135,23 +139,23 @@ export default function MyOutfitsPage() {
         <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {outfits.map(outfit => (
             <div
-              key={outfit.id}
-              className="bg-gray-50 rounded-lg shadow-lg p-4 flex flex-col"
+            key={outfit.id}
+            className="bg-gray-50 rounded-lg shadow-lg p-4 flex flex-col"
             >
               <h2 className="text-2xl font-light text-gray-700 mb-8">{outfit.name}</h2>
               {outfit.clothes && outfit.clothes.length > 0 ? (
                 <div className="grid grid-cols-3 gap-2 mb-8">
                   {outfit.clothes.slice(0, 6).map(clothe => (
                     <div
-                      key={clothe.id}
-                      className="relative w-full h-20 rounded overflow-hidden"
+                    key={clothe.id}
+                    className="relative w-full h-20 rounded overflow-hidden"
                     >
                       <Image
                         src={clothe.imageUrl}
                         alt={clothe.name}
                         fill
                         className="object-cover transition-transform duration-300 hover:scale-105"
-                      />
+                        />
                     </div>
                   ))}
                 </div>
@@ -164,7 +168,7 @@ export default function MyOutfitsPage() {
                   setEditingOutfitName(outfit.name);
                 }}
                 className="mt-auto px-4 py-2 bg-cyan-500 text-white rounded-full w-fit hover:bg-cyan-600 transition flex items-center gap-2"
-              >
+                >
                 <FaEdit /> Ver Detalles
               </button>
             </div>
@@ -178,7 +182,7 @@ export default function MyOutfitsPage() {
             <button
               onClick={() => setSelectedOutfit(null)}
               className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-            >
+              >
               <FaTimes size={20} />
             </button>
             <h2 className="text-3xl font-light mb-4">Detalles del Outfit</h2>
@@ -191,7 +195,7 @@ export default function MyOutfitsPage() {
                 value={editingOutfitName}
                 onChange={(e) => setEditingOutfitName(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-              />
+                />
             </div>
             <div>
               <h3 className="text-xl font-base text-gray-800 mb-4">Prendas</h3>
@@ -203,11 +207,11 @@ export default function MyOutfitsPage() {
                       alt={clothe.name}
                       fill
                       className="object-cover"
-                    />
+                      />
                     <button
                       onClick={() => handleRemoveGarmentFromOutfit(clothe.id)}
                       className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 hover:bg-red-700"
-                    >
+                      >
                       <FaTimes size={12} />
                     </button>
                   </div>
@@ -230,7 +234,7 @@ export default function MyOutfitsPage() {
               <button
                 onClick={() => setShowAddGarmentModal(true)}
                 className="mt-auto w-fit px-4 py-2 bg-[#00b289] text-white rounded-full hover:bg-[#24806c] transition flex items-center gap-2"
-              >
+                >
                 <FaPlus /> Añadir Prenda
               </button> 
               </span>
@@ -238,7 +242,7 @@ export default function MyOutfitsPage() {
               <button
                 onClick={() => handleEditOutfit(selectedOutfit.id)}
                 className="flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-full hover:bg-green-600 transition"
-              >
+                >
                 <FaCheck /> Guardar
               </button>
               </span>
@@ -250,7 +254,7 @@ export default function MyOutfitsPage() {
                   }
                 }
                 className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-full hover:bg-red-500 transition"
-              >
+                >
                 <FaTrash /> Eliminar
               </button>
               </span>
@@ -259,5 +263,6 @@ export default function MyOutfitsPage() {
         </div>
       )}
     </div>
+      </ProtectedRoute>
   );
 }
