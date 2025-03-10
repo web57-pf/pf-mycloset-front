@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from "react";
-import { Doughnut, Line, Bar, Pie } from "react-chartjs-2";
+import { Line, Bar, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -69,9 +69,9 @@ interface DetailedUser {
 
 export const AdminDashboard = () => {
   const [usersCount, setUsersCount] = useState<number>(0);
-  const [proUsers, setProUsers] = useState<any[]>([]);
-  const [premiumUsers, setPremiumUsers] = useState<any[]>([]);
-  const [freeUsers, setFreeUsers] = useState<any[]>([]);
+  const [proUsers, setProUsers] = useState<DetailedUser[]>([]);
+  const [premiumUsers, setPremiumUsers] = useState<DetailedUser[]>([]);
+  const [freeUsers, setFreeUsers] = useState<DetailedUser[]>([]);
   const [totalSales, setTotalSales] = useState<number>(0);
   const [orders, setOrders] = useState<Order[]>([]);
   const [monthlyRegistrations, setMonthlyRegistrations] = useState<RegistrationMetric[]>([]);
@@ -147,7 +147,7 @@ export const AdminDashboard = () => {
           'El usuario ha sido baneado exitosamente.',
           'success'
         );
-      } catch (error) {
+      } catch {
         Swal.fire(
           'Error',
           'No se pudo banear al usuario.',

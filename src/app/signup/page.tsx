@@ -4,9 +4,7 @@ import { useState } from "react";
 import Swal from "sweetalert2";  
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { inherits } from "util";
 import axios from "axios";
-
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -17,14 +15,7 @@ const Register = () => {
   const [isFocused, setIsFocused] = useState(false);  
   const router = useRouter(); 
 
-  interface PasswordValidationEvent extends React.ChangeEvent<HTMLInputElement> {}
-
-  interface PasswordValidationState {
-    isUpperCase: boolean;
-    isNumber: boolean;
-  }
-
-  const validatePassword = (e: PasswordValidationEvent): void => {
+  const validatePassword = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const passwordValue: string = e.target.value;
     setPassword(passwordValue);
 
@@ -63,12 +54,6 @@ const Register = () => {
     password: string;
   }
 
-  // interface RegisterResponse {
-  //   id: string;
-  //   name: string;
-  //   email: string;
-  // }
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -84,10 +69,7 @@ const Register = () => {
 
         if (response.status === 200) {
           console.log("Usuario registrado:", response.data);
-          
-          
           showSuccessAlert();
-
         } else {
           console.error("Error en el registro");
         }
