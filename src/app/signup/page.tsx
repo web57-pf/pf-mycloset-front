@@ -4,9 +4,6 @@ import { useState } from "react";
 import Swal from "sweetalert2";  
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { inherits } from "util";
-import axios from "axios";
-
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -14,36 +11,45 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [isUpperCase, setIsUpperCase] = useState(false);
   const [isNumber, setIsNumber] = useState(false);
+  const [hasSpecialChar, setHasSpecialChar] = useState(false); // Nueva validación para carácter especial
   const [isFocused, setIsFocused] = useState(false);  
   const router = useRouter(); 
 
-  interface PasswordValidationEvent extends React.ChangeEvent<HTMLInputElement> {}
-
-  interface PasswordValidationState {
-    isUpperCase: boolean;
-    isNumber: boolean;
-  }
-
-  const validatePassword = (e: PasswordValidationEvent): void => {
+  // Validar contraseña
+  const validatePassword = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const passwordValue: string = e.target.value;
     setPassword(passwordValue);
 
     const upperCaseRegex: RegExp = /[A-Z]/;
     const numberRegex: RegExp = /\d/;
+    const specialCharRegex: RegExp = /[!@#$%^&*(),.?":{}|<>]/; // Regex para caracteres especiales
     
     setIsUpperCase(upperCaseRegex.test(passwordValue));
     setIsNumber(numberRegex.test(passwordValue));
+    setHasSpecialChar(specialCharRegex.test(passwordValue)); // Verificar si hay un carácter especial
   };
 
+  // Alerta de validación
   const showValidationAlert = () => {
     Swal.fire({
       icon: "error",
       title: "¡Error!",
-      text: "La contraseña debe contener al menos una mayúscula y un número.",
+      text: "La contraseña debe contener al menos una mayúscula, un número y un carácter especial.",
       confirmButtonText: "Entendido",
     });
   };
 
+  // Alerta de correo ya registrado
+  const showEmailAlreadyExistsAlert = () => {
+    Swal.fire({
+      icon: "error",
+      title: "¡Error!",
+      text: "Este correo ya está registrado. Por favor, utiliza otro correo.",
+      confirmButtonText: "Entendido",
+    });
+  };
+
+  // Alerta de éxito
   const showSuccessAlert = () => {
     Swal.fire({
       icon: "success",
@@ -63,42 +69,51 @@ const Register = () => {
     password: string;
   }
 
-  // interface RegisterResponse {
-  //   id: string;
-  //   name: string;
-  //   email: string;
-  // }
+  interface RegisterResponse {
+    id: string;
+    name: string;
+    email: string;
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!isUpperCase || !isNumber) {
+    // Validar la contraseña antes de enviar el formulario
+    if (!isUpperCase || !isNumber || !hasSpecialChar) {
       showValidationAlert();
+      return;
+    }
+
+    const formData: RegisterFormData = { name, email, password };
+
+    // Verificar si el correo ya está registrado
+    const emailResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/check-email`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    const emailData = await emailResponse.json();
+
+    if (emailData.exists) {
+      // Si el correo ya existe, mostrar alerta y evitar el registro
+      showEmailAlreadyExistsAlert();
+      return;
+    }
+
+    // Si todo está bien, continuar con el registro
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    if (response.ok) {
+      const data: RegisterResponse = await response.json();
+      console.log("Usuario registrado:", data);
+      showSuccessAlert();
     } else {
-      const formData: RegisterFormData = { name, email, password };
-
-      try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/signup`, formData, {
-          headers: { "Content-Type": "application/json" },
-        });
-
-        if (response.status === 200) {
-          console.log("Usuario registrado:", response.data);
-          
-          
-          showSuccessAlert();
-
-        } else {
-          console.error("Error en el registro");
-        }
-      } catch (error) {
-        console.error("Error al registrar usuario:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error en el registro",
-          text: "Hubo un problema al registrar tu cuenta. Intenta nuevamente más tarde.",
-        });
-      }
+      console.error("Error en el registro");
     }
   };
 
@@ -120,15 +135,13 @@ const Register = () => {
 
       <div className="flex justify-center items-center w-1/2">
         <div className="p-8 rounded-lg shadow-lg w-full max-w-md bg-gray-100">
-          <h1 className="text-2xl font-semibold text-center text-gray-700 mb-6 ">
+          <h1 className="text-2xl font-semibold text-center text-gray-700 mb-6">
             Formulario de Registro
           </h1>
 
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label htmlFor="name" className="block text-gray-600">
-                Nombre:
-              </label>
+              <label htmlFor="name" className="block text-gray-600">Nombre:</label>
               <input
                 type="text"
                 id="name"
@@ -140,9 +153,7 @@ const Register = () => {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="email" className="block text-gray-600">
-                Correo Electrónico:
-              </label>
+              <label htmlFor="email" className="block text-gray-600">Correo Electrónico:</label>
               <input
                 type="email"
                 id="email"
@@ -154,9 +165,7 @@ const Register = () => {
             </div>
 
             <div className="mb-6">
-              <label htmlFor="password" className="block text-gray-600">
-                Contraseña:
-              </label>
+              <label htmlFor="password" className="block text-gray-600">Contraseña:</label>
               <input
                 type="password"
                 id="password"
@@ -176,6 +185,9 @@ const Register = () => {
                     </li>
                     <li className={`flex items-center ${isNumber ? "text-green-500" : "text-red-500"}`}>
                       {isNumber ? "✔" : "✖"} Al menos un número.
+                    </li>
+                    <li className={`flex items-center ${hasSpecialChar ? "text-green-500" : "text-red-500"}`}>
+                      {hasSpecialChar ? "✔" : "✖"} Al menos un carácter especial.
                     </li>
                   </ul>
                 </div>
