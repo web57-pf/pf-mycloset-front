@@ -11,29 +11,45 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [isUpperCase, setIsUpperCase] = useState(false);
   const [isNumber, setIsNumber] = useState(false);
+  const [hasSpecialChar, setHasSpecialChar] = useState(false); // Nueva validación para carácter especial
   const [isFocused, setIsFocused] = useState(false);  
   const router = useRouter(); 
 
+  // Validar contraseña
   const validatePassword = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const passwordValue: string = e.target.value;
     setPassword(passwordValue);
 
     const upperCaseRegex: RegExp = /[A-Z]/;
     const numberRegex: RegExp = /\d/;
+    const specialCharRegex: RegExp = /[!@#$%^&*(),.?":{}|<>]/; // Regex para caracteres especiales
     
     setIsUpperCase(upperCaseRegex.test(passwordValue));
     setIsNumber(numberRegex.test(passwordValue));
+    setHasSpecialChar(specialCharRegex.test(passwordValue)); // Verificar si hay un carácter especial
   };
 
+  // Alerta de validación
   const showValidationAlert = () => {
     Swal.fire({
       icon: "error",
       title: "¡Error!",
-      text: "La contraseña debe contener al menos una mayúscula y un número.",
+      text: "La contraseña debe contener al menos una mayúscula, un número y un carácter especial.",
       confirmButtonText: "Entendido",
     });
   };
 
+  // Alerta de correo ya registrado
+  const showEmailAlreadyExistsAlert = () => {
+    Swal.fire({
+      icon: "error",
+      title: "¡Error!",
+      text: "Este correo ya está registrado. Por favor, utiliza otro correo.",
+      confirmButtonText: "Entendido",
+    });
+  };
+
+  // Alerta de éxito
   const showSuccessAlert = () => {
     Swal.fire({
       icon: "success",
@@ -62,24 +78,42 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!isUpperCase || !isNumber) {
+    // Validar la contraseña antes de enviar el formulario
+    if (!isUpperCase || !isNumber || !hasSpecialChar) {
       showValidationAlert();
+      return;
+    }
+
+    const formData: RegisterFormData = { name, email, password };
+
+    // Verificar si el correo ya está registrado
+    const emailResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/check-email`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    const emailData = await emailResponse.json();
+
+    if (emailData.exists) {
+      // Si el correo ya existe, mostrar alerta y evitar el registro
+      showEmailAlreadyExistsAlert();
+      return;
+    }
+
+    // Si todo está bien, continuar con el registro
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    if (response.ok) {
+      const data: RegisterResponse = await response.json();
+      console.log("Usuario registrado:", data);
+      showSuccessAlert();
     } else {
-      const formData: RegisterFormData = { name, email, password };
-
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        const data: RegisterResponse = await response.json();
-        console.log("Usuario registrado:", data);
-        showSuccessAlert();
-      } else {
-        console.error("Error en el registro");
-      }
+      console.error("Error en el registro");
     }
   };
 
@@ -151,6 +185,9 @@ const Register = () => {
                     </li>
                     <li className={`flex items-center ${isNumber ? "text-green-500" : "text-red-500"}`}>
                       {isNumber ? "✔" : "✖"} Al menos un número.
+                    </li>
+                    <li className={`flex items-center ${hasSpecialChar ? "text-green-500" : "text-red-500"}`}>
+                      {hasSpecialChar ? "✔" : "✖"} Al menos un carácter especial.
                     </li>
                   </ul>
                 </div>
