@@ -10,6 +10,9 @@ import { useAuth } from "@/contexts/authContext";
 import { OutfitGarments } from "@/components/DropBox";
 import ProtectedRoute from "@/components/ProtectedRoute/protectedRoute";
 import getUserOutfits from "@/helpers/getUserOutfits";
+// import dynamic from "next/dynamic";
+
+// const WeatherMap = dynamic(() => import ("@/components/WeatherMap/page"), {ssr:false});
 
 export interface Clothe {
   name: string;
@@ -162,8 +165,11 @@ export default function MyCloset() {
           onFilter={handleFilter}
           onClearFilter={handleClearFilter} 
           />
-
       </div>
+
+        {/* <div className="weather-map-container w-80 h-80 p-4">
+          <WeatherMap/>
+        </div> */}
 
       <div className="flex flex-col flex-1">
         <Dashboard
