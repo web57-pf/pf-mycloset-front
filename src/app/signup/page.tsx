@@ -11,25 +11,23 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [isUpperCase, setIsUpperCase] = useState(false);
   const [isNumber, setIsNumber] = useState(false);
-  const [hasSpecialChar, setHasSpecialChar] = useState(false); // Nueva validación para carácter especial
+  const [isSpecialChar, setIsSpecialChar] = useState(false); // Estado para el carácter especial
   const [isFocused, setIsFocused] = useState(false);  
   const router = useRouter(); 
 
-  // Validar contraseña
   const validatePassword = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const passwordValue: string = e.target.value;
     setPassword(passwordValue);
 
     const upperCaseRegex: RegExp = /[A-Z]/;
     const numberRegex: RegExp = /\d/;
-    const specialCharRegex: RegExp = /[!@#$%^&*(),.?":{}|<>]/; // Regex para caracteres especiales
+    const specialCharRegex: RegExp = /[!@#$%^&*(),.?":{}|<>]/; // Expresión regular para caracteres especiales
     
     setIsUpperCase(upperCaseRegex.test(passwordValue));
     setIsNumber(numberRegex.test(passwordValue));
-    setHasSpecialChar(specialCharRegex.test(passwordValue)); // Verificar si hay un carácter especial
+    setIsSpecialChar(specialCharRegex.test(passwordValue)); // Validar si tiene un carácter especial
   };
 
-  // Alerta de validación
   const showValidationAlert = () => {
     Swal.fire({
       icon: "error",
@@ -39,17 +37,6 @@ const Register = () => {
     });
   };
 
-  // Alerta de correo ya registrado
-  const showEmailAlreadyExistsAlert = () => {
-    Swal.fire({
-      icon: "error",
-      title: "¡Error!",
-      text: "Este correo ya está registrado. Por favor, utiliza otro correo.",
-      confirmButtonText: "Entendido",
-    });
-  };
-
-  // Alerta de éxito
   const showSuccessAlert = () => {
     Swal.fire({
       icon: "success",
@@ -60,6 +47,15 @@ const Register = () => {
       willClose: () => {
         router.push("/login");  
       }
+    });
+  };
+
+  const showEmailExistsAlert = () => {
+    Swal.fire({
+      icon: "error",
+      title: "¡Error!",
+      text: "El correo electrónico ya está en uso.",
+      confirmButtonText: "Entendido",
     });
   };
 
@@ -78,42 +74,45 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validar la contraseña antes de enviar el formulario
-    if (!isUpperCase || !isNumber || !hasSpecialChar) {
+    if (!isUpperCase || !isNumber || !isSpecialChar) { // Verificamos que tenga mayúscula, número y carácter especial
       showValidationAlert();
-      return;
-    }
-
-    const formData: RegisterFormData = { name, email, password };
-
-    // Verificar si el correo ya está registrado
-    const emailResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/check-email`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
-
-    const emailData = await emailResponse.json();
-
-    if (emailData.exists) {
-      // Si el correo ya existe, mostrar alerta y evitar el registro
-      showEmailAlreadyExistsAlert();
-      return;
-    }
-
-    // Si todo está bien, continuar con el registro
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/signup`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-
-    if (response.ok) {
-      const data: RegisterResponse = await response.json();
-      console.log("Usuario registrado:", data);
-      showSuccessAlert();
     } else {
-      console.error("Error en el registro");
+      const formData: RegisterFormData = { name, email, password };
+
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/signup`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+          const data: RegisterResponse = await response.json();
+          console.log("Usuario registrado:", data);
+          showSuccessAlert();
+        } else {
+          const errorData = await response.json(); // Obtener el cuerpo de la respuesta de error
+          if (response.status === 409) {
+            showEmailExistsAlert();
+          } else {
+            // Mostrar el mensaje de error detallado
+            Swal.fire({
+              icon: "error",
+              title: "¡Error!",
+              text: errorData.message || "Hubo un error al intentar registrar el usuario.",
+              confirmButtonText: "Entendido",
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error en la conexión con el servidor:", error);
+        Swal.fire({
+          icon: "error",
+          title: "¡Error de conexión!",
+          text: "No se pudo conectar al servidor. Intenta de nuevo más tarde.",
+          confirmButtonText: "Entendido",
+        });
+      }
     }
   };
 
@@ -186,8 +185,8 @@ const Register = () => {
                     <li className={`flex items-center ${isNumber ? "text-green-500" : "text-red-500"}`}>
                       {isNumber ? "✔" : "✖"} Al menos un número.
                     </li>
-                    <li className={`flex items-center ${hasSpecialChar ? "text-green-500" : "text-red-500"}`}>
-                      {hasSpecialChar ? "✔" : "✖"} Al menos un carácter especial.
+                    <li className={`flex items-center ${isSpecialChar ? "text-green-500" : "text-red-500"}`}>
+                      {isSpecialChar ? "✔" : "✖"} Al menos un carácter especial.
                     </li>
                   </ul>
                 </div>
