@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/authContext";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const { setUser } = useAuth();
 
@@ -72,7 +73,7 @@ const Login = () => {
     );
 
     if (response.ok) {
-      await checkSession(); 
+      await checkSession();
 
       Swal.fire({
         title: "¡Bienvenido!",
@@ -96,7 +97,7 @@ const Login = () => {
 
   useEffect(() => {
     checkSession();
-  }, []); 
+  }, []);
 
   return (
     <div className="flex h-screen bg-inherit">
@@ -125,22 +126,30 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Ingresa tu correo"
-
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-gray-900"
             />
           </div>
 
-          <div className="mb-6">
+          <div className="mb-6 relative">
             <label className="block text-gray-700 text-sm mb-2">
               Contraseña
             </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Ingresa tu contraseña"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-gray-900"
-            />
+            <div className="relative w-full">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Ingresa tu contraseña"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-gray-900 pr-10"
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-3 flex items-center"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "👁️" : "🙈"}
+              </button>
+            </div>
           </div>
 
           <button
@@ -169,6 +178,16 @@ const Login = () => {
             className="text-blue-500 hover:text-blue-700 font-semibold"
           >
             Regístrate
+          </button>
+        </div>
+
+        <div className="mt-2 text-center text-sm text-gray-500">
+          ¿Olvidaste tu contraseña?
+          <button
+            onClick={() => router.push("/password")}
+            className="text-blue-500 hover:text-blue-700 font-semibold"
+          >
+            Restablecer contraseña
           </button>
         </div>
       </div>
