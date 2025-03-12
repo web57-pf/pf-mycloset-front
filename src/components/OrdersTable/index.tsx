@@ -1,4 +1,5 @@
 'use client'
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
@@ -63,7 +64,9 @@ const OrdersTable: React.FC = () => {
         Swal.fire("Eliminada!", "La orden ha sido eliminada.", "success");
         fetchOrders(); // refrescar la lista
       } catch (error) {
-        Swal.fire("Error", "No se pudo eliminar la orden.", "error");
+        Swal.fire("Error", "No se pudo eliminar la orden.", 
+          axios.isAxiosError(error) && error.response?.status === 400 ? 'error' : 'warning'
+        );
       }
     }
   };

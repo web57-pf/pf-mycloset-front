@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from "react";
-import { Doughnut, Line, Bar, Pie } from "react-chartjs-2";
+import { Line, Bar, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -72,9 +72,9 @@ export interface DetailedUser {
 
 export const AdminDashboard = () => {
   const [usersCount, setUsersCount] = useState<number>(0);
-  const [proUsers, setProUsers] = useState<any[]>([]);
-  const [premiumUsers, setPremiumUsers] = useState<any[]>([]);
-  const [freeUsers, setFreeUsers] = useState<any[]>([]);
+  const [proUsers, setProUsers] = useState<DetailedUser[]>([]);
+  const [premiumUsers, setPremiumUsers] = useState<DetailedUser[]>([]);
+  const [freeUsers, setFreeUsers] = useState<DetailedUser[]>([]);
   const [totalSales, setTotalSales] = useState<number>(0);
   const [orders, setOrders] = useState<Order[]>([]);
   const [monthlyRegistrations, setMonthlyRegistrations] = useState<RegistrationMetric[]>([]);
@@ -195,7 +195,7 @@ export const AdminDashboard = () => {
       Swal.fire(
         'Error',
         'No se pudo actualizar el usuario.',
-        'error'
+        axios.isAxiosError(error) && error.response?.status === 400 ? 'error' : 'warning'
       );
     }
   };
@@ -231,7 +231,7 @@ export const AdminDashboard = () => {
         Swal.fire(
           'Error',
           'No se pudo banear al usuario.',
-          'error'
+          axios.isAxiosError(error) && error.response?.status === 400 ? 'error' : 'warning'
         );
       }
     }
@@ -265,7 +265,7 @@ export const AdminDashboard = () => {
         );
         Swal.fire('¡Rol asignado!', 'El usuario ahora es administrador.', 'success');
       } catch (error) {
-        Swal.fire('Error', 'No se pudo asignar el rol de administrador.', 'error');
+        Swal.fire('Error', 'No se pudo asignar el rol de administrador.', axios.isAxiosError(error) && error.response?.status === 400 ? 'error' : 'warning');
       }
     }
   };
