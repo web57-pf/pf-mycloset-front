@@ -2,11 +2,14 @@
 import React, { useState } from "react";
 import AdminDashboard from "@/components/AdminDashboard";
 import ContentCreator from "@/components/ContentCreator";
+import ProtectedRoute from "@/components/ProtectedRoute/protectedRoute";
 
 export default function AdminDash() {
   const [showContentCreator, setShowContentCreator] = useState(false);
 
   return (
+    <ProtectedRoute>
+
     <div className="p-6 mb-20 min-h-screen bg-gradient-to-br from-[#fffbf7] to-[#fffbf7]">
       <div className="flex justify-end mb-4">
         <button
@@ -16,11 +19,12 @@ export default function AdminDash() {
               ? "bg-gradient-to-r from-[#afcacf] to-[#899ec5] hover:from-[#7da6ad] hover:to-[#7899d6] transition duration-200"
               : "bg-gradient-to-r from-[#afcacf] to-[#899ec5] hover:from-[#7da6ad] hover:to-[#7899d6] transition duration-200"
             }`}
-        >
+            >
           {showContentCreator ? "Volver al Panel de Administración" : "Creador de Contenido"}
         </button>
       </div>
       {showContentCreator ? <ContentCreator /> : <AdminDashboard />}
     </div>
+          </ProtectedRoute>
   );
 }

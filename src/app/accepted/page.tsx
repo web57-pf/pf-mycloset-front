@@ -8,15 +8,14 @@ import { useAuth } from '@/contexts/authContext';
 const Accepted = () => {
   const router = useRouter();
   const { refreshUser } = useAuth(); 
-  const [isUserUpdated, setIsUserUpdated] = useState(false); // Control de actualización de usuario
+  const [isUserUpdated, setIsUserUpdated] = useState(false); 
 
   useEffect(() => {
     const updateUserSession = async () => {
       await refreshUser(); 
-      setIsUserUpdated(true); // Marcar que la actualización ha ocurrido
+      setIsUserUpdated(true); 
     };
 
-    // Evitar que la actualización se ejecute más de una vez
     if (!isUserUpdated) {
       updateUserSession().then(() => {
         Swal.fire({
