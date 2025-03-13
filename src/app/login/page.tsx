@@ -14,38 +14,28 @@ const Login = () => {
   const router = useRouter();
   const { setUser } = useAuth();
 
-  const handleGoogleLogin = async () => {
-    try {
-      // Realizar la autenticación con Google desde el backend
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`, {
-        method: 'GET', // Asegurándonos de que es GET
-        credentials: 'include', // Incluir las cookies de sesión
-      });
-
-      if (response.ok) {
-        // Al autenticar con Google, verificamos la sesión
-        checkSession();
-      } else {
-        console.error("Error al autenticar con Google");
-      }
-    } catch (error) {
-      console.error("Error al realizar login con Google:", error);
-    }
+  const handleGoogleLogin =  () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
   };
+  
+  interface LoginCredentials {
+    email: string;
+    password: string;
+  }
 
   const checkSession = async () => {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session`,
         {
-          method: "GET", // Cambiar a GET
-          credentials: "include", // Asegurarnos de incluir la cookie de sesión
+          method: "POST",
+          credentials: "include",
         }
       );
 
       if (response.ok) {
         const user = await response.json();
-        setUser(user); // Actualizamos el estado con los datos del usuario
+        setUser(user);
 
         Swal.fire({
           title: "Sesión activa",
@@ -56,8 +46,6 @@ const Login = () => {
         }).then(() => {
           router.push("/mycloset");
         });
-      } else {
-        console.error("No hay sesión activa");
       }
     } catch (error) {
       console.error("Error verificando la sesión", error);
@@ -67,7 +55,7 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const credentials = {
+    const credentials: LoginCredentials = {
       email,
       password,
     };
@@ -85,7 +73,7 @@ const Login = () => {
     );
 
     if (response.ok) {
-      await checkSession(); // Verificamos la sesión después del login
+      await checkSession();
 
       Swal.fire({
         title: "¡Bienvenido!",
@@ -108,14 +96,7 @@ const Login = () => {
   };
 
   useEffect(() => {
-    // Verificar si el parámetro "code" está presente en la URL
-    const queryParams = new URLSearchParams(window.location.search);
-    const googleAuthCode = queryParams.get("code");
-
-    if (googleAuthCode) {
-      // Si el código está presente, hacer la verificación de la sesión
-      checkSession();
-    }
+    checkSession();
   }, []);
 
   return (
@@ -215,3 +196,4 @@ const Login = () => {
 };
 
 export default Login;
+
