@@ -15,27 +15,37 @@ const Login = () => {
   const { setUser } = useAuth();
 
   const handleGoogleLogin = async () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
-  };
+    try {
+      // Realizar la autenticación con Google desde el backend
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`, {
+        method: 'GET', // Asegurándonos de que es GET
+        credentials: 'include', // Incluir las cookies de sesión
+      });
 
-  interface LoginCredentials {
-    email: string;
-    password: string;
-  }
+      if (response.ok) {
+        // Al autenticar con Google, verificamos la sesión
+        checkSession();
+      } else {
+        console.error("Error al autenticar con Google");
+      }
+    } catch (error) {
+      console.error("Error al realizar login con Google:", error);
+    }
+  };
 
   const checkSession = async () => {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session`,
         {
-          method: "POST",
-          credentials: "include",
+          method: "GET", // Cambiar a GET
+          credentials: "include", // Asegurarnos de incluir la cookie de sesión
         }
       );
 
       if (response.ok) {
         const user = await response.json();
-        setUser(user);
+        setUser(user); // Actualizamos el estado con los datos del usuario
 
         Swal.fire({
           title: "Sesión activa",
@@ -46,6 +56,8 @@ const Login = () => {
         }).then(() => {
           router.push("/mycloset");
         });
+      } else {
+        console.error("No hay sesión activa");
       }
     } catch (error) {
       console.error("Error verificando la sesión", error);
@@ -55,7 +67,7 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const credentials: LoginCredentials = {
+    const credentials = {
       email,
       password,
     };
@@ -73,7 +85,7 @@ const Login = () => {
     );
 
     if (response.ok) {
-      await checkSession();
+      await checkSession(); // Verificamos la sesión después del login
 
       Swal.fire({
         title: "¡Bienvenido!",
