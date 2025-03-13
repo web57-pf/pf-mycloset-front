@@ -118,7 +118,7 @@ export const AdminDashboard = () => {
 
   const handleShowUsers = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/admin`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/total`, {
         credentials: 'include'
       });
       const data = await response.json();
@@ -145,7 +145,7 @@ export const AdminDashboard = () => {
 
   const handleShowAllUsers = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/admin`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/total`, {
         credentials: 'include'
       });
       const data = await response.json();
