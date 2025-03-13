@@ -4,6 +4,13 @@ import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
 
+enum status {
+  PAID = "paid",
+  PENDING = "pending",
+  NOT_PAID = "not_paid",
+  DELETED = "deleted",
+}
+
 interface OrderDetail {
   id: string;
   startedAt: string;
@@ -14,13 +21,8 @@ interface OrderDetail {
 interface Order {
   id: string;
   date: string;
-  status: string;
+  status: status; // status: string;
   subsType: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-  };
   details: OrderDetail[];
 }
 
@@ -33,7 +35,7 @@ const OrdersTable: React.FC = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/order-detail`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/order`, {
         credentials: "include",
       });
       const data = await response.json();
@@ -57,7 +59,7 @@ const OrdersTable: React.FC = () => {
 
     if (result.isConfirmed) {
       try {
-        await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/order-detail/${orderId}`, {
+        await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/order/${orderId}`, {
           method: "DELETE",
           credentials: "include",
         });
@@ -76,9 +78,7 @@ const OrdersTable: React.FC = () => {
       const detailsString = order.details
         .map(
           (detail) =>
-            `ID: ${detail.id}, Precio: ${detail.price.toFixed(
-              2
-            )}, Inicio: ${new Date(detail.startedAt).toLocaleDateString()}, Fin: ${new Date(
+            `ID: ${detail.id}, Precio: ${detail.price}, Inicio: ${new Date(detail.startedAt).toLocaleDateString()}, Fin: ${new Date(
               detail.endsAt
             ).toLocaleDateString()}`
         )
@@ -86,8 +86,6 @@ const OrdersTable: React.FC = () => {
       return {
         "Order ID": order.id,
         "Fecha": new Date(order.date).toLocaleDateString(),
-        "Usuario": order.user.name,
-        "Email": order.user.email,
         "Tipo de Suscripción": order.subsType,
         "Estado": order.status,
         "Detalles": detailsString,
@@ -123,12 +121,12 @@ const OrdersTable: React.FC = () => {
               <th className="px-4 py-2 bg-gray-100 text-left text-xs font-medium text-gray-500 uppercase">
                 Fecha
               </th>
-              <th className="px-4 py-2 bg-gray-100 text-left text-xs font-medium text-gray-500 uppercase">
+              {/* <th className="px-4 py-2 bg-gray-100 text-left text-xs font-medium text-gray-500 uppercase">
                 Usuario
               </th>
               <th className="px-4 py-2 bg-gray-100 text-left text-xs font-medium text-gray-500 uppercase">
                 Email
-              </th>
+              </th> */}
               <th className="px-4 py-2 bg-gray-100 text-left text-xs font-medium text-gray-500 uppercase">
                 Tipo de Suscripción
               </th>
@@ -151,12 +149,6 @@ const OrdersTable: React.FC = () => {
                   {new Date(order.date).toLocaleDateString()}
                 </td>
                 <td className="px-4 py-2 whitespace-nowrap">
-                  {order.user.name}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap">
-                  {order.user.email}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap">
                   {order.subsType}
                 </td>
                 <td className="px-4 py-2 whitespace-nowrap">
@@ -166,7 +158,7 @@ const OrdersTable: React.FC = () => {
                   {order.details.map((detail) => (
                     <div key={detail.id}>
                       <span className="block text-sm text-gray-600">
-                        Precio: ${detail.price.toFixed(2)}
+                        Precio: ${detail.price}
                       </span>
                       <span className="block text-xs text-gray-500">
                         Inicio: {new Date(detail.startedAt).toLocaleDateString()}
@@ -178,12 +170,21 @@ const OrdersTable: React.FC = () => {
                   ))}
                 </td>
                 <td className="px-4 py-2 whitespace-nowrap">
-                  <button
-                    onClick={() => handleDeleteOrder(order.id)}
-                    className="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
-                  >
-                    Eliminar
-                  </button>
+                  {order.status !== status.DELETED ? (
+                    <button
+                      onClick={() => handleDeleteOrder(order.id)}
+                      className="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
+                    >
+                      Eliminar
+                    </button>
+                  ) : (
+                    <button
+                      disabled
+                      className="px-3 py-1 bg-gray-300 text-gray-700 rounded-md cursor-not-allowed"
+                    >
+                      Eliminar
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
