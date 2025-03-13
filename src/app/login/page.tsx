@@ -14,7 +14,7 @@ const Login = () => {
   const router = useRouter();
   const { setUser } = useAuth();
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
     window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
   };
 
@@ -96,7 +96,14 @@ const Login = () => {
   };
 
   useEffect(() => {
-    checkSession();
+    // Verificar si el parámetro "code" está presente en la URL
+    const queryParams = new URLSearchParams(window.location.search);
+    const googleAuthCode = queryParams.get("code");
+
+    if (googleAuthCode) {
+      // Si el código está presente, hacer la verificación de la sesión
+      checkSession();
+    }
   }, []);
 
   return (

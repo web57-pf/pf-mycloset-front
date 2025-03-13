@@ -43,6 +43,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session`, {
         method: "POST",
         credentials: "include",
+        cache: "no-store"
       });
 
       if (response.ok) {
